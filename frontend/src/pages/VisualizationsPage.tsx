@@ -13,6 +13,9 @@ import {
 } from 'recharts'
 import { fetchVisualizations } from '../api/client'
 import { ConfusionMatrixHeatmap } from '../components/ConfusionMatrixHeatmap'
+import { PageHeader } from '../components/PageHeader'
+import { UiState } from '../components/UiState'
+import { CLASS_SUPPORT, LABEL_STRATEGY } from '../data/academicFacts'
 import type { ModelHistoryViz, ModelMetricsViz, VisualizationsPayload } from '../types'
 
 function Unavailable({ message }: { message?: string }) {
@@ -50,11 +53,20 @@ function MetricCard({
   caption?: string
 }) {
   return (
-    <section className="rounded-2xl border border-[var(--color-line)] bg-white/90 p-5 shadow-sm">
-      <h2 className="font-display text-2xl text-[var(--color-ink)]">{title}</h2>
-      {caption && <p className="mt-1 text-sm text-[var(--color-ink-muted)]">{caption}</p>}
-      <div className="mt-4">{children}</div>
+    <section className="panel panel-pad min-w-0">
+      <h2 className="font-display m-0 text-2xl text-[var(--color-ink)]">{title}</h2>
+      {caption && <p className="m-0 mt-1 text-sm text-[var(--color-ink-muted)]">{caption}</p>}
+      <div className="mt-4 min-w-0">{children}</div>
     </section>
+  )
+}
+
+function AcademicNote({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="note-block mt-4">
+      <p className="m-0 font-semibold text-[var(--color-ink)]">{title}</p>
+      <div className="mt-2 space-y-2">{children}</div>
+    </div>
   )
 }
 
@@ -69,7 +81,7 @@ function PerClassChart({ metrics }: { metrics: ModelMetricsViz }) {
     F1: pct(row.f1),
   }))
   return (
-    <div className="h-80 w-full">
+    <div className="h-80 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ left: 4, right: 8, top: 8 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e2ddd4" />
@@ -92,8 +104,8 @@ function HistoryCharts({ hist }: { hist: ModelHistoryViz }) {
   if (!data.length) return <Unavailable message="History series empty." />
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <div className="h-72">
+    <div className="grid min-w-0 gap-6 lg:grid-cols-2">
+      <div className="chart-frame h-72">
         <p className="mb-2 text-sm font-semibold">Accuracy (%)</p>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
@@ -107,7 +119,7 @@ function HistoryCharts({ hist }: { hist: ModelHistoryViz }) {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <div className="h-72">
+      <div className="chart-frame h-72">
         <p className="mb-2 text-sm font-semibold">Loss</p>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
@@ -183,21 +195,29 @@ export function VisualizationsPage() {
     }
   }, [data])
 
-  return (
-    <div className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
-      <section className="max-w-3xl">
-        <h1 className="font-display text-4xl">Visualizations</h1>
-        <p className="mt-2 text-[var(--color-ink-muted)]">
-          Academic plots generated from existing evaluation and training artifacts. Every value is
-          loaded from the API — nothing is hard-coded in the UI.
-        </p>
-      </section>
+  const crackSupportFromApi = useMemo(() => {
+    const rows =
+      data?.metrics.mobilenetv2.per_class ?? data?.metrics.custom_cnn.per_class ?? []
+    const crack = rows.find((r) => r.class_id === 'crack')
+    return crack?.support ?? CLASS_SUPPORT.crack.test
+  }, [data])
 
-      {loading && <p className="text-sm text-[var(--color-ink-muted)]">Loading visualization data…</p>}
+  return (
+    <div className="page-shell section-stack">
+      <PageHeader
+        title="Visualizations"
+        subtitle="Academic plots generated from existing evaluation and training artifacts. Every value is loaded from the API — nothing is hard-coded in the UI. Charts below are unchanged; captions explain how to interpret them in a viva."
+      />
+
+      {loading && (
+        <UiState kind="loading" title="Loading visualization data">
+          Assembling charts from evaluation and history artifacts…
+        </UiState>
+      )}
       {error && (
-        <p className="text-sm text-[var(--color-danger)]" role="alert">
+        <UiState kind="error" title="Could not load visualizations">
           {error}
-        </p>
+        </UiState>
       )}
 
       {data && (
@@ -206,7 +226,7 @@ export function VisualizationsPage() {
             title="1. Confusion matrices"
             caption="Held-out CarDD test set. Counts come from custom_cnn_metrics.json and mobilenetv2_metrics.json."
           >
-            <div className="grid gap-8 lg:grid-cols-2">
+            <div className="grid min-w-0 gap-8 lg:grid-cols-2">
               {data.metrics.custom_cnn.available && data.metrics.custom_cnn.confusion_matrix ? (
                 <ConfusionMatrixHeatmap
                   title="Custom CNN"
@@ -226,31 +246,60 @@ export function VisualizationsPage() {
                 <Unavailable message={data.metrics.mobilenetv2.message} />
               )}
             </div>
+            <AcademicNote title="How to read a confusion matrix">
+              <p>
+                <strong className="text-[var(--color-ink)]">Diagonal</strong> cells (true class =
+                predicted class) are correct predictions. Larger diagonal values are better.
+              </p>
+              <p>
+                <strong className="text-[var(--color-ink)]">Off-diagonal</strong> cells are mistakes:
+                the row is the true label and the column is what the model predicted instead (for
+                example, true scratch predicted as dent).
+              </p>
+              <p>
+                Compare the two matrices for the same test set: differences show where transfer
+                learning helps or where both models still confuse similar damage types.
+              </p>
+            </AcademicNote>
           </MetricCard>
 
           <MetricCard
             title="2. Per-class performance"
-            caption="Macro-unaware view: precision, recall, and F1 for each CarDD class on the test split."
+            caption="Precision, recall, and F1 for each CarDD class on the held-out test split (not macro-averaged into one number)."
           >
-            <div className="grid gap-8 lg:grid-cols-2">
-              <div>
+            <div className="grid min-w-0 gap-8 lg:grid-cols-2">
+              <div className="min-w-0">
                 <p className="mb-2 text-sm font-semibold">Custom CNN</p>
                 <PerClassChart metrics={data.metrics.custom_cnn} />
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="mb-2 text-sm font-semibold">MobileNetV2</p>
                 <PerClassChart metrics={data.metrics.mobilenetv2} />
               </div>
             </div>
-            <p className="mt-3 text-xs text-[var(--color-ink-muted)]">
-              Rare classes (especially crack) can show near-zero scores due to limited support after
-              image-level label reduction — this is a real data characteristic, not a chart error.
-            </p>
+            <AcademicNote title="Class-wise results and the crack limitation">
+              <p>
+                These bars show how each damage type behaves on its own. A model can have solid
+                overall accuracy while still failing a rare class.
+              </p>
+              <p>
+                <strong className="text-[var(--color-ink)]">Crack</strong> has only{' '}
+                <strong className="text-[var(--color-ink)]">{crackSupportFromApi}</strong> test
+                images after image-level{' '}
+                <code className="rounded bg-white/70 px-1 text-xs">{LABEL_STRATEGY}</code> labeling.
+                With so few examples, precision/recall/F1 for crack are unstable and often weak —
+                that is a real data limitation, not a chart bug.
+              </p>
+              <p>
+                Prefer discussing frequent classes (dent, scratch, glass shatter, etc.) alongside
+                this caveat when presenting viva results.
+              </p>
+            </AcademicNote>
           </MetricCard>
 
           <MetricCard
             title="3. Training history"
-            caption="Mapped from history JSON keys: accuracy / val_accuracy / loss / val_loss."
+            caption="Mapped from history JSON keys: accuracy / val_accuracy / loss / val_loss over epochs."
           >
             <div className="space-y-8">
               <div>
@@ -262,6 +311,25 @@ export function VisualizationsPage() {
                 <HistoryCharts hist={data.history.mobilenetv2} />
               </div>
             </div>
+            <AcademicNote title="Training vs validation curves">
+              <p>
+                <strong className="text-[var(--color-ink)]">Train</strong> curves show performance on
+                data the model sees while learning.{' '}
+                <strong className="text-[var(--color-ink)]">Validation</strong> curves show
+                performance on held-out images used to monitor generalization during training.
+              </p>
+              <p>
+                Rising train accuracy with falling train loss is expected. Watch validation together:
+                if train keeps improving while validation stalls or worsens (a growing{' '}
+                <strong className="text-[var(--color-ink)]">gap</strong>), that can indicate
+                overfitting — memorizing train patterns that do not transfer as well.
+              </p>
+              <p>
+                Final model quality for this project is judged on the separate held-out{' '}
+                <strong className="text-[var(--color-ink)]">test</strong> metrics (comparison /
+                confusion matrices), not on a single training epoch alone.
+              </p>
+            </AcademicNote>
           </MetricCard>
 
           <MetricCard
@@ -271,8 +339,8 @@ export function VisualizationsPage() {
             {!data.comparison?.available || comparisonBars.length === 0 ? (
               <Unavailable message={data.comparison?.message || 'Comparison data not available.'} />
             ) : (
-              <div className="grid gap-6 lg:grid-cols-2">
-                <div className="h-80">
+              <div className="grid min-w-0 gap-6 lg:grid-cols-2">
+                <div className="chart-frame h-80">
                   <p className="mb-2 text-sm font-semibold">Quality metrics (%)</p>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={comparisonBars}>
@@ -315,7 +383,7 @@ export function VisualizationsPage() {
             <p className="mt-4 text-sm text-[var(--color-ink-muted)]">
               In this experiment MobileNetV2 reaches higher test accuracy with a much smaller
               artifact, while the Custom CNN remains the from-scratch baseline. Neither model is
-              claimed to be universally superior.
+              claimed to be universally superior — report only what these evaluation artifacts show.
             </p>
           </MetricCard>
         </>

@@ -1,5 +1,5 @@
 import type { ModelPrediction } from '../types'
-import { AlertCircle, Clock3, Gauge } from 'lucide-react'
+import { AlertCircle, Clock3, Gauge, Loader2 } from 'lucide-react'
 
 interface Props {
   title: string
@@ -13,11 +13,12 @@ export function PredictionCard({ title, accent, result, loading }: Props) {
 
   if (loading) {
     return (
-      <article className="rounded-2xl border border-[var(--color-line)] bg-white/80 p-5 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: accentColor }}>
+      <article className="panel panel-pad min-w-0">
+        <p className="section-label" style={{ color: accentColor }}>
           {title}
         </p>
-        <p className="mt-4 animate-pulse-soft text-sm text-[var(--color-ink-muted)]">
+        <p className="mt-4 flex items-center gap-2 text-sm text-[var(--color-ink-muted)]">
+          <Loader2 size={16} className="animate-spin" />
           Running inference…
         </p>
       </article>
@@ -26,8 +27,8 @@ export function PredictionCard({ title, accent, result, loading }: Props) {
 
   if (!result) {
     return (
-      <article className="rounded-2xl border border-[var(--color-line)] bg-white/80 p-5 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: accentColor }}>
+      <article className="panel panel-pad min-w-0 border-dashed">
+        <p className="section-label" style={{ color: accentColor }}>
           {title}
         </p>
         <p className="mt-4 text-sm text-[var(--color-ink-muted)]">
@@ -39,13 +40,13 @@ export function PredictionCard({ title, accent, result, loading }: Props) {
 
   if (!result.available) {
     return (
-      <article className="rounded-2xl border border-[var(--color-line)] bg-white/80 p-5 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: accentColor }}>
+      <article className="panel panel-pad min-w-0">
+        <p className="section-label" style={{ color: accentColor }}>
           {title}
         </p>
         <div className="mt-4 flex items-start gap-2 text-[var(--color-warn)]">
           <AlertCircle size={18} className="mt-0.5 shrink-0" />
-          <p className="text-sm">
+          <p className="m-0 text-sm">
             {result.message || 'Model not available. Train this model before inference.'}
           </p>
         </div>
@@ -57,19 +58,19 @@ export function PredictionCard({ title, accent, result, loading }: Props) {
     result.confidence != null ? `${(result.confidence * 100).toFixed(1)}%` : '—'
 
   return (
-    <article className="animate-fade-up rounded-2xl border border-[var(--color-line)] bg-white/90 p-5 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: accentColor }}>
+    <article className="panel panel-pad animate-fade-up min-w-0">
+      <p className="section-label" style={{ color: accentColor }}>
         {title}
       </p>
-      <h3 className="font-display mt-3 text-3xl text-[var(--color-ink)]">
+      <h3 className="font-display mt-3 text-3xl leading-none text-[var(--color-ink)]">
         {result.class ?? '—'}
       </h3>
       <div className="mt-4 grid grid-cols-2 gap-3">
         <div className="rounded-xl bg-[var(--color-surface)] px-3 py-2.5">
-          <p className="flex items-center gap-1 text-xs text-[var(--color-ink-muted)]">
+          <p className="m-0 flex items-center gap-1 text-xs text-[var(--color-ink-muted)]">
             <Gauge size={12} /> Confidence
           </p>
-          <p className="mt-1 text-lg font-semibold">{confidencePct}</p>
+          <p className="m-0 mt-1 text-lg font-semibold">{confidencePct}</p>
           {result.confidence != null && (
             <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--color-line)]">
               <div
@@ -83,10 +84,10 @@ export function PredictionCard({ title, accent, result, loading }: Props) {
           )}
         </div>
         <div className="rounded-xl bg-[var(--color-surface)] px-3 py-2.5">
-          <p className="flex items-center gap-1 text-xs text-[var(--color-ink-muted)]">
+          <p className="m-0 flex items-center gap-1 text-xs text-[var(--color-ink-muted)]">
             <Clock3 size={12} /> Inference
           </p>
-          <p className="mt-1 text-lg font-semibold">
+          <p className="m-0 mt-1 text-lg font-semibold">
             {result.inference_time_ms != null
               ? `${result.inference_time_ms.toFixed(1)} ms`
               : '—'}
@@ -94,14 +95,26 @@ export function PredictionCard({ title, accent, result, loading }: Props) {
         </div>
       </div>
       {result.probabilities && (
-        <ul className="mt-4 space-y-1.5">
+        <ul className="mt-4 space-y-2">
           {Object.entries(result.probabilities)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 6)
             .map(([label, p]) => (
-              <li key={label} className="flex items-center justify-between text-xs">
-                <span className="text-[var(--color-ink-muted)]">{label}</span>
-                <span className="font-medium">{(p * 100).toFixed(1)}%</span>
+              <li key={label} className="min-w-0">
+                <div className="mb-1 flex items-center justify-between gap-2 text-xs">
+                  <span className="truncate text-[var(--color-ink-muted)]">{label}</span>
+                  <span className="shrink-0 font-medium">{(p * 100).toFixed(1)}%</span>
+                </div>
+                <div className="h-1 overflow-hidden rounded-full bg-[var(--color-line)]">
+                  <div
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${Math.max(1, p * 100)}%`,
+                      background: accentColor,
+                      opacity: 0.75,
+                    }}
+                  />
+                </div>
               </li>
             ))}
         </ul>

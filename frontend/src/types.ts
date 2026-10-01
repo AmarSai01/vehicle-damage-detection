@@ -1,4 +1,6 @@
 export type ModelId = 'custom_cnn' | 'mobilenetv2'
+/** Analyzer selector includes side-by-side compare via existing API `model=both`. */
+export type PredictModelSelection = ModelId | 'both'
 
 export interface ModelPrediction {
   model_name: string
