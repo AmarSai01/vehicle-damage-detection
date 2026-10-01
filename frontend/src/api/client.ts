@@ -1,8 +1,8 @@
 import type {
   ComparisonData,
   HealthResponse,
-  ModelId,
   ModelsResponse,
+  PredictModelSelection,
   PredictResponse,
   VisualizationsPayload,
 } from '../types'
@@ -67,7 +67,7 @@ export async function fetchVisualizations(): Promise<VisualizationsPayload> {
 
 export async function predictImage(
   file: File,
-  model: ModelId | 'both' = 'both',
+  model: PredictModelSelection = 'both',
 ): Promise<PredictResponse> {
   const form = new FormData()
   form.append('file', file)

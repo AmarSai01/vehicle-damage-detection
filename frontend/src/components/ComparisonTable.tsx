@@ -1,4 +1,5 @@
 import type { ComparisonData } from '../types'
+import { UiState } from './UiState'
 
 interface Props {
   comparison: ComparisonData | null
@@ -15,7 +16,11 @@ function fmt(value: number | null | undefined, suffix = '') {
   return value.toFixed(4)
 }
 
-const ROWS: { key: keyof NonNullable<ComparisonData['models']['custom_cnn']>; label: string; kind: string }[] = [
+const ROWS: {
+  key: keyof NonNullable<ComparisonData['models']['custom_cnn']>
+  label: string
+  kind: string
+}[] = [
   { key: 'accuracy', label: 'Accuracy', kind: '%' },
   { key: 'precision', label: 'Precision (macro)', kind: '%' },
   { key: 'recall', label: 'Recall (macro)', kind: '%' },
@@ -27,19 +32,11 @@ const ROWS: { key: keyof NonNullable<ComparisonData['models']['custom_cnn']>; la
 
 export function ComparisonTable({ comparison, loading, error }: Props) {
   if (loading) {
-    return (
-      <div className="rounded-2xl border border-[var(--color-line)] bg-white/80 p-6 text-sm text-[var(--color-ink-muted)]">
-        Loading evaluation results…
-      </div>
-    )
+    return <UiState kind="loading" title="Loading comparison">Fetching evaluation metrics…</UiState>
   }
 
   if (error) {
-    return (
-      <div className="rounded-2xl border border-[var(--color-line)] bg-white/80 p-6 text-sm text-[var(--color-danger)]">
-        {error}
-      </div>
-    )
+    return <UiState kind="error" title="Could not load comparison">{error}</UiState>
   }
 
   const notReady =
@@ -50,14 +47,9 @@ export function ComparisonTable({ comparison, loading, error }: Props) {
 
   if (notReady) {
     return (
-      <div className="rounded-2xl border border-dashed border-[var(--color-line)] bg-white/70 p-6">
-        <h3 className="font-display text-2xl text-[var(--color-ink)]">Model Comparison</h3>
-        <p className="mt-2 text-sm text-[var(--color-ink-muted)]">
-          {comparison?.message ||
-            'Evaluation results will appear after training.'}
-        </p>
-        <p className="mt-3 text-sm text-[var(--color-warn)]">Not trained yet.</p>
-      </div>
+      <UiState kind="empty" title="Not trained yet">
+        {comparison?.message || 'Evaluation results will appear after training.'}
+      </UiState>
     )
   }
 
@@ -65,14 +57,14 @@ export function ComparisonTable({ comparison, loading, error }: Props) {
   const mnv = comparison.models.mobilenetv2
 
   return (
-    <div className="animate-fade-up overflow-hidden rounded-2xl border border-[var(--color-line)] bg-white/90 shadow-sm">
+    <div className="panel animate-fade-up overflow-hidden">
       <div className="border-b border-[var(--color-line)] px-5 py-4">
-        <h3 className="font-display text-2xl">Model Comparison</h3>
-        <p className="mt-1 text-sm text-[var(--color-ink-muted)]">
-          Metrics measured on the held-out test split — no fabricated values.
+        <h3 className="font-display m-0 text-2xl text-[var(--color-ink)]">Side-by-side metrics</h3>
+        <p className="m-0 mt-1 text-sm text-[var(--color-ink-muted)]">
+          Held-out test split — values from the evaluation artifact only.
         </p>
       </div>
-      <div className="overflow-x-auto">
+      <div className="table-scroll">
         <table className="min-w-full text-left text-sm">
           <thead className="bg-[var(--color-surface)] text-xs uppercase tracking-wide text-[var(--color-ink-muted)]">
             <tr>
@@ -82,16 +74,24 @@ export function ComparisonTable({ comparison, loading, error }: Props) {
             </tr>
           </thead>
           <tbody>
-            {ROWS.map((row) => {
-              const cnnVal = cnn.status === 'evaluated' ? (cnn[row.key] as number | null | undefined) : null
-              const mnvVal = mnv.status === 'evaluated' ? (mnv[row.key] as number | null | undefined) : null
+            {ROWS.map((row, idx) => {
+              const cnnVal =
+                cnn.status === 'evaluated' ? (cnn[row.key] as number | null | undefined) : null
+              const mnvVal =
+                mnv.status === 'evaluated' ? (mnv[row.key] as number | null | undefined) : null
               return (
-                <tr key={row.key} className="border-t border-[var(--color-line)]">
+                <tr
+                  key={row.key}
+                  className={[
+                    'border-t border-[var(--color-line)]',
+                    idx % 2 === 1 ? 'bg-white/40' : '',
+                  ].join(' ')}
+                >
                   <td className="px-5 py-3 font-medium text-[var(--color-ink)]">{row.label}</td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3 tabular-nums">
                     {cnn.status === 'evaluated' ? fmt(cnnVal, row.kind) : 'Not trained yet.'}
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3 tabular-nums">
                     {mnv.status === 'evaluated' ? fmt(mnvVal, row.kind) : 'Not trained yet.'}
                   </td>
                 </tr>

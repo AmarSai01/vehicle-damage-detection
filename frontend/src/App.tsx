@@ -11,9 +11,9 @@ import { VisualizationsPage } from './pages/VisualizationsPage'
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen">
+      <div className="flex min-h-screen min-w-0 flex-col overflow-x-hidden">
         <Header />
-        <main>
+        <main className="min-w-0 flex-1">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/analyze" element={<AnalyzerPage />} />
@@ -24,7 +24,7 @@ export default function App() {
             <Route path="/about" element={<AboutPage />} />
           </Routes>
         </main>
-        <footer className="mx-auto max-w-6xl px-4 py-10 text-center text-xs text-[var(--color-ink-muted)] sm:px-6">
+        <footer className="mx-auto w-full max-w-6xl border-t border-[var(--color-line)]/70 px-4 py-8 text-center text-xs leading-relaxed text-[var(--color-ink-muted)] sm:px-6">
           Vehicle Damage Detection &amp; Classification · Academic demonstration · Real Keras
           inference · No fabricated predictions
         </footer>

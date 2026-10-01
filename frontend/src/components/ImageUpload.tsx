@@ -46,7 +46,7 @@ export function ImageUpload({ file, previewUrl, onFileChange, disabled }: Props)
   }
 
   return (
-    <section className="animate-fade-up">
+    <section className="min-w-0">
       <div
         onDragOver={(e) => {
           e.preventDefault()
@@ -57,8 +57,8 @@ export function ImageUpload({ file, previewUrl, onFileChange, disabled }: Props)
         className={[
           'relative overflow-hidden rounded-2xl border-2 border-dashed transition',
           dragOver
-            ? 'border-[var(--color-accent)] bg-[var(--color-accent-soft)]'
-            : 'border-[var(--color-line)] bg-white/70',
+            ? 'border-[var(--color-accent)] bg-[var(--color-accent-soft)] shadow-[0_0_0_4px_rgba(13,115,119,0.08)]'
+            : 'border-[var(--color-line)] bg-white/80',
         ].join(' ')}
       >
         {previewUrl ? (
@@ -66,10 +66,10 @@ export function ImageUpload({ file, previewUrl, onFileChange, disabled }: Props)
             <img
               src={previewUrl}
               alt="Upload preview"
-              className="max-h-[420px] w-full object-contain bg-[#0c1222]/[0.03]"
+              className="max-h-[min(52vh,440px)] w-full object-contain bg-[#0c1222]/[0.03]"
             />
-            <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-gradient-to-t from-[var(--color-ink)]/70 to-transparent px-4 py-3 text-white">
-              <p className="truncate text-sm">{file?.name}</p>
+            <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 bg-gradient-to-t from-[var(--color-ink)]/75 to-transparent px-4 py-3 text-white">
+              <p className="min-w-0 truncate text-sm">{file?.name}</p>
               <button
                 type="button"
                 disabled={disabled}
@@ -78,7 +78,7 @@ export function ImageUpload({ file, previewUrl, onFileChange, disabled }: Props)
                   handleFile(null)
                   if (inputRef.current) inputRef.current.value = ''
                 }}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-white/15 px-3 py-1.5 text-sm backdrop-blur hover:bg-white/25 disabled:opacity-50"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-white/15 px-3 py-1.5 text-sm backdrop-blur hover:bg-white/25 disabled:opacity-50"
               >
                 <Trash2 size={14} />
                 Remove
@@ -90,7 +90,7 @@ export function ImageUpload({ file, previewUrl, onFileChange, disabled }: Props)
             type="button"
             disabled={disabled}
             onClick={() => inputRef.current?.click()}
-            className="flex w-full flex-col items-center gap-3 px-6 py-14 text-center disabled:opacity-60"
+            className="flex w-full flex-col items-center gap-3 px-6 py-16 text-center disabled:opacity-60"
           >
             <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
               <Upload size={26} />
@@ -103,7 +103,7 @@ export function ImageUpload({ file, previewUrl, onFileChange, disabled }: Props)
                 or click to browse · JPG, PNG, BMP, WebP · max {MAX_MB} MB
               </p>
             </div>
-            <span className="mt-1 inline-flex items-center gap-2 rounded-lg bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white">
+            <span className="btn btn-primary mt-1">
               <ImagePlus size={16} />
               Browse files
             </span>
