@@ -1,0 +1,252 @@
+{
+  "dataset_root": "C:\\Users\\Amar Sai\\Download\\CarDD_release\\CarDD_release\\CarDD_COCO",
+  "split_source": "cardd_coco_official",
+  "label_strategy": "max_total_area",
+  "safe_to_train": true,
+  "errors": [],
+  "warnings": [],
+  "checks": {
+    "every_image_exactly_one_target_class": true,
+    "multi_class_images_not_discarded": true,
+    "official_splits_preserved": true,
+    "path_leakage_detected": false,
+    "missing_image_files": 0,
+    "policy_mismatches": 0
+  },
+  "coco_image_counts": {
+    "train": 2816,
+    "val": 810,
+    "test": 374
+  },
+  "classification_sample_counts": {
+    "train": 2816,
+    "val": 810,
+    "test": 374
+  },
+  "single_class_images": {
+    "train": 1732,
+    "val": 504,
+    "test": 234
+  },
+  "multi_class_images": {
+    "train": 1084,
+    "val": 306,
+    "test": 140
+  },
+  "multi_class_examples": [
+    {
+      "split": "train",
+      "coco_image_id": 1,
+      "file_name": "000001.jpg",
+      "category_ids": [
+        2,
+        6
+      ],
+      "num_annotations": 2
+    },
+    {
+      "split": "train",
+      "coco_image_id": 8,
+      "file_name": "000008.jpg",
+      "category_ids": [
+        3,
+        6
+      ],
+      "num_annotations": 7
+    },
+    {
+      "split": "train",
+      "coco_image_id": 9,
+      "file_name": "000009.jpg",
+      "category_ids": [
+        1,
+        2,
+        6
+      ],
+      "num_annotations": 4
+    },
+    {
+      "split": "train",
+      "coco_image_id": 14,
+      "file_name": "000014.jpg",
+      "category_ids": [
+        1,
+        2,
+        6
+      ],
+      "num_annotations": 4
+    },
+    {
+      "split": "train",
+      "coco_image_id": 22,
+      "file_name": "000022.jpg",
+      "category_ids": [
+        2,
+        3
+      ],
+      "num_annotations": 4
+    },
+    {
+      "split": "train",
+      "coco_image_id": 29,
+      "file_name": "000029.jpg",
+      "category_ids": [
+        1,
+        5
+      ],
+      "num_annotations": 3
+    },
+    {
+      "split": "train",
+      "coco_image_id": 37,
+      "file_name": "000037.jpg",
+      "category_ids": [
+        2,
+        6
+      ],
+      "num_annotations": 2
+    },
+    {
+      "split": "train",
+      "coco_image_id": 39,
+      "file_name": "000039.jpg",
+      "category_ids": [
+        1,
+        2,
+        3,
+        5,
+        6
+      ],
+      "num_annotations": 5
+    },
+    {
+      "split": "train",
+      "coco_image_id": 45,
+      "file_name": "000045.jpg",
+      "category_ids": [
+        1,
+        2,
+        3
+      ],
+      "num_annotations": 5
+    },
+    {
+      "split": "train",
+      "coco_image_id": 48,
+      "file_name": "000048.jpg",
+      "category_ids": [
+        1,
+        4
+      ],
+      "num_annotations": 2
+    },
+    {
+      "split": "train",
+      "coco_image_id": 49,
+      "file_name": "000049.jpg",
+      "category_ids": [
+        2,
+        3,
+        5,
+        6
+      ],
+      "num_annotations": 7
+    },
+    {
+      "split": "train",
+      "coco_image_id": 52,
+      "file_name": "000052.jpg",
+      "category_ids": [
+        2,
+        5
+      ],
+      "num_annotations": 2
+    },
+    {
+      "split": "train",
+      "coco_image_id": 62,
+      "file_name": "000062.jpg",
+      "category_ids": [
+        1,
+        5
+      ],
+      "num_annotations": 3
+    },
+    {
+      "split": "train",
+      "coco_image_id": 63,
+      "file_name": "000063.jpg",
+      "category_ids": [
+        1,
+        2,
+        5
+      ],
+      "num_annotations": 4
+    },
+    {
+      "split": "train",
+      "coco_image_id": 66,
+      "file_name": "000066.jpg",
+      "category_ids": [
+        1,
+        2,
+        3
+      ],
+      "num_annotations": 3
+    }
+  ],
+  "class_counts_after_conversion": {
+    "train": {
+      "dent": 823,
+      "scratch": 932,
+      "crack": 61,
+      "glass_shatter": 457,
+      "lamp_broken": 333,
+      "tire_flat": 210
+    },
+    "val": {
+      "dent": 241,
+      "scratch": 270,
+      "crack": 25,
+      "glass_shatter": 131,
+      "lamp_broken": 88,
+      "tire_flat": 55
+    },
+    "test": {
+      "dent": 109,
+      "scratch": 122,
+      "crack": 8,
+      "glass_shatter": 65,
+      "lamp_broken": 42,
+      "tire_flat": 28
+    },
+    "all": {
+      "dent": 1173,
+      "scratch": 1324,
+      "crack": 94,
+      "glass_shatter": 653,
+      "lamp_broken": 463,
+      "tire_flat": 293
+    }
+  },
+  "path_leakage": {
+    "train\u2229val": 0,
+    "train\u2229test": 0,
+    "val\u2229test": 0
+  },
+  "coco_image_id_overlap_counts": {
+    "train\u2229val": 0,
+    "train\u2229test": 0,
+    "val\u2229test": 0
+  },
+  "coco_image_id_overlap_note": "Numeric image ids may repeat across split JSON files; leakage is assessed on resolved filesystem paths.",
+  "missing_files_sample": [],
+  "policy_mismatch_sample": [],
+  "policy": {
+    "name": "max_total_area",
+    "description": "For each image, sum COCO annotation `area` per category_id; assign the category with maximum total area. Ties: higher annotation count, then lower category_id. Multi-class images are retained with this single deterministic label.",
+    "ambiguity_assessment": "Material for interpretation (multi-damage scenes reduced to one class) but deterministic and documented; experiment remains valid if this policy is stated in methods. No silent discard.",
+    "ask_user": false
+  },
+  "next_train_command": ".\\.venv\\Scripts\\python.exe -m ml.training.train_custom_cnn"
+}

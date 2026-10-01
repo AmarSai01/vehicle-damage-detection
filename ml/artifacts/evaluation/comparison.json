@@ -1,0 +1,57 @@
+{
+  "status": "evaluated",
+  "message": "Real evaluation results.",
+  "table": {
+    "accuracy": {
+      "custom_cnn": 0.5989304812834224,
+      "mobilenetv2": 0.7272727272727273
+    },
+    "precision_macro": {
+      "custom_cnn": 0.5384536189796904,
+      "mobilenetv2": 0.8248116141142584
+    },
+    "recall_macro": {
+      "custom_cnn": 0.5070036512509065,
+      "mobilenetv2": 0.6403308580008084
+    },
+    "f1_macro": {
+      "custom_cnn": 0.5159621761758033,
+      "mobilenetv2": 0.6665497000810319
+    },
+    "inference_time_ms_mean": {
+      "custom_cnn": 15.5641799465132,
+      "mobilenetv2": 13.522012299436417
+    },
+    "model_size_mb": {
+      "custom_cnn": 307.6358,
+      "mobilenetv2": 27.1963
+    },
+    "parameters": {
+      "custom_cnn": 26870374,
+      "mobilenetv2": 2587462
+    }
+  },
+  "models": {
+    "custom_cnn": {
+      "status": "evaluated",
+      "accuracy": 0.5989304812834224,
+      "precision": 0.5384536189796904,
+      "recall": 0.5070036512509065,
+      "f1": 0.5159621761758033,
+      "inference_time_ms": 15.5641799465132,
+      "model_size_mb": 307.6358,
+      "parameters": 26870374
+    },
+    "mobilenetv2": {
+      "status": "evaluated",
+      "accuracy": 0.7272727272727273,
+      "precision": 0.8248116141142584,
+      "recall": 0.6403308580008084,
+      "f1": 0.6665497000810319,
+      "inference_time_ms": 13.522012299436417,
+      "model_size_mb": 27.1963,
+      "parameters": 2587462
+    }
+  },
+  "note": "Compare metrics directly; do not assume superiority without numbers."
+}

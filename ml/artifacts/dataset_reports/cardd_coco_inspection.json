@@ -1,0 +1,626 @@
+{
+  "dataset_root": "C:\\Users\\Amar Sai\\Download\\CarDD_release\\CarDD_release\\CarDD_COCO",
+  "structures_identical_across_splits": true,
+  "structure_signatures": {
+    "train": {
+      "keys": [
+        "annotations",
+        "categories",
+        "images",
+        "info",
+        "licenses"
+      ],
+      "num_categories": 6,
+      "categories": [
+        {
+          "id": 1,
+          "name": "dent",
+          "supercategory": null
+        },
+        {
+          "id": 2,
+          "name": "scratch",
+          "supercategory": null
+        },
+        {
+          "id": 3,
+          "name": "crack",
+          "supercategory": null
+        },
+        {
+          "id": 4,
+          "name": "glass shatter",
+          "supercategory": null
+        },
+        {
+          "id": 5,
+          "name": "lamp broken",
+          "supercategory": null
+        },
+        {
+          "id": 6,
+          "name": "tire flat",
+          "supercategory": null
+        }
+      ],
+      "image_keys": [
+        "file_name",
+        "height",
+        "id",
+        "license",
+        "width"
+      ],
+      "ann_keys": [
+        "area",
+        "attributes",
+        "bbox",
+        "category_id",
+        "id",
+        "image_id",
+        "iscrowd",
+        "segmentation"
+      ]
+    },
+    "val": {
+      "keys": [
+        "annotations",
+        "categories",
+        "images",
+        "info",
+        "licenses"
+      ],
+      "num_categories": 6,
+      "categories": [
+        {
+          "id": 1,
+          "name": "dent",
+          "supercategory": null
+        },
+        {
+          "id": 2,
+          "name": "scratch",
+          "supercategory": null
+        },
+        {
+          "id": 3,
+          "name": "crack",
+          "supercategory": null
+        },
+        {
+          "id": 4,
+          "name": "glass shatter",
+          "supercategory": null
+        },
+        {
+          "id": 5,
+          "name": "lamp broken",
+          "supercategory": null
+        },
+        {
+          "id": 6,
+          "name": "tire flat",
+          "supercategory": null
+        }
+      ],
+      "image_keys": [
+        "file_name",
+        "height",
+        "id",
+        "license",
+        "width"
+      ],
+      "ann_keys": [
+        "area",
+        "attributes",
+        "bbox",
+        "category_id",
+        "id",
+        "image_id",
+        "iscrowd",
+        "segmentation"
+      ]
+    },
+    "test": {
+      "keys": [
+        "annotations",
+        "categories",
+        "images",
+        "info",
+        "licenses"
+      ],
+      "num_categories": 6,
+      "categories": [
+        {
+          "id": 1,
+          "name": "dent",
+          "supercategory": null
+        },
+        {
+          "id": 2,
+          "name": "scratch",
+          "supercategory": null
+        },
+        {
+          "id": 3,
+          "name": "crack",
+          "supercategory": null
+        },
+        {
+          "id": 4,
+          "name": "glass shatter",
+          "supercategory": null
+        },
+        {
+          "id": 5,
+          "name": "lamp broken",
+          "supercategory": null
+        },
+        {
+          "id": 6,
+          "name": "tire flat",
+          "supercategory": null
+        }
+      ],
+      "image_keys": [
+        "file_name",
+        "height",
+        "id",
+        "license",
+        "width"
+      ],
+      "ann_keys": [
+        "area",
+        "attributes",
+        "bbox",
+        "category_id",
+        "id",
+        "image_id",
+        "iscrowd",
+        "segmentation"
+      ]
+    }
+  },
+  "splits": {
+    "train": {
+      "ann_file": "C:\\Users\\Amar Sai\\Download\\CarDD_release\\CarDD_release\\CarDD_COCO\\annotations\\instances_train2017.json",
+      "top_level_keys": [
+        "annotations",
+        "categories",
+        "images",
+        "info",
+        "licenses"
+      ],
+      "info": {
+        "contributor": "Xinkuang Wang, Wenjing Li, Zhongcheng Wu",
+        "date_created": "2022.05.01",
+        "description": "CarDD for car damage detection in COCO Format.",
+        "url": "https://cardd-ustc.github.io/",
+        "version": "v1.0"
+      },
+      "categories": [
+        {
+          "id": 1,
+          "name": "dent",
+          "supercategory": null
+        },
+        {
+          "id": 2,
+          "name": "scratch",
+          "supercategory": null
+        },
+        {
+          "id": 3,
+          "name": "crack",
+          "supercategory": null
+        },
+        {
+          "id": 4,
+          "name": "glass shatter",
+          "supercategory": null
+        },
+        {
+          "id": 5,
+          "name": "lamp broken",
+          "supercategory": null
+        },
+        {
+          "id": 6,
+          "name": "tire flat",
+          "supercategory": null
+        }
+      ],
+      "num_categories": 6,
+      "num_images_in_json": 2816,
+      "num_annotations": 6211,
+      "num_image_files_on_disk": 2816,
+      "images_with_existing_files": 2816,
+      "missing_files_count": 0,
+      "missing_files_sample": [],
+      "images_with_zero_annotations": 0,
+      "images_with_annotations": 2816,
+      "multi_annotation_images": 1545,
+      "multi_class_images": 1084,
+      "annotation_category_counts": {
+        "dent": 1806,
+        "scratch": 2560,
+        "crack": 651,
+        "glass shatter": 475,
+        "lamp broken": 494,
+        "tire flat": 225
+      },
+      "images_per_category": {
+        "dent": 1242,
+        "scratch": 1507,
+        "crack": 434,
+        "glass shatter": 469,
+        "lamp broken": 489,
+        "tire flat": 219
+      },
+      "majority_vote_image_labels": {
+        "dent": 967,
+        "scratch": 1074,
+        "crack": 141,
+        "glass shatter": 391,
+        "lamp broken": 70,
+        "tire flat": 173
+      },
+      "majority_ties": 536,
+      "sample_image_keys": [
+        "file_name",
+        "height",
+        "id",
+        "license",
+        "width"
+      ],
+      "sample_annotation_keys": [
+        "area",
+        "attributes",
+        "bbox",
+        "category_id",
+        "id",
+        "image_id",
+        "iscrowd",
+        "segmentation"
+      ],
+      "sample_image": {
+        "id": 1,
+        "width": 1000,
+        "height": 750,
+        "file_name": "000001.jpg",
+        "license": 0
+      },
+      "sample_annotation": {
+        "id": 1,
+        "image_id": 1,
+        "category_id": 2,
+        "area": 13584.0,
+        "bbox": [
+          167.04,
+          40.21,
+          202.79,
+          131.34
+        ],
+        "iscrowd": 0,
+        "attributes": {
+          "occluded": false
+        },
+        "segmentation_type": "list"
+      },
+      "sample_file_name": "000001.jpg",
+      "ann_count_histogram": {
+        "1": 1271,
+        "2": 664,
+        "3": 386,
+        "4": 247,
+        "5": 131,
+        "6": 61,
+        "7": 30,
+        "8": 14,
+        "9": 6,
+        "10": 1,
+        "11": 2,
+        "12": 2,
+        "13": 1
+      },
+      "distinct_classes_per_image_histogram": {
+        "1": 1732,
+        "2": 716,
+        "3": 282,
+        "4": 80,
+        "5": 6
+      }
+    },
+    "val": {
+      "ann_file": "C:\\Users\\Amar Sai\\Download\\CarDD_release\\CarDD_release\\CarDD_COCO\\annotations\\instances_val2017.json",
+      "top_level_keys": [
+        "annotations",
+        "categories",
+        "images",
+        "info",
+        "licenses"
+      ],
+      "info": {
+        "contributor": "Xinkuang Wang, Wenjing Li, Zhongcheng Wu",
+        "date_created": "2022.05.01",
+        "description": "CarDD for car damage detection in COCO Format.",
+        "url": "https://cardd-ustc.github.io/",
+        "version": "v1.0"
+      },
+      "categories": [
+        {
+          "id": 1,
+          "name": "dent",
+          "supercategory": null
+        },
+        {
+          "id": 2,
+          "name": "scratch",
+          "supercategory": null
+        },
+        {
+          "id": 3,
+          "name": "crack",
+          "supercategory": null
+        },
+        {
+          "id": 4,
+          "name": "glass shatter",
+          "supercategory": null
+        },
+        {
+          "id": 5,
+          "name": "lamp broken",
+          "supercategory": null
+        },
+        {
+          "id": 6,
+          "name": "tire flat",
+          "supercategory": null
+        }
+      ],
+      "num_categories": 6,
+      "num_images_in_json": 810,
+      "num_annotations": 1744,
+      "num_image_files_on_disk": 810,
+      "images_with_existing_files": 810,
+      "missing_files_count": 0,
+      "missing_files_sample": [],
+      "images_with_zero_annotations": 0,
+      "images_with_annotations": 810,
+      "multi_annotation_images": 429,
+      "multi_class_images": 306,
+      "annotation_category_counts": {
+        "dent": 501,
+        "scratch": 728,
+        "crack": 177,
+        "glass shatter": 135,
+        "lamp broken": 141,
+        "tire flat": 62
+      },
+      "images_per_category": {
+        "dent": 352,
+        "scratch": 431,
+        "crack": 122,
+        "glass shatter": 134,
+        "lamp broken": 139,
+        "tire flat": 59
+      },
+      "majority_vote_image_labels": {
+        "dent": 277,
+        "scratch": 308,
+        "crack": 46,
+        "glass shatter": 110,
+        "lamp broken": 25,
+        "tire flat": 44
+      },
+      "majority_ties": 150,
+      "sample_image_keys": [
+        "file_name",
+        "height",
+        "id",
+        "license",
+        "width"
+      ],
+      "sample_annotation_keys": [
+        "area",
+        "attributes",
+        "bbox",
+        "category_id",
+        "id",
+        "image_id",
+        "iscrowd",
+        "segmentation"
+      ],
+      "sample_image": {
+        "id": 13,
+        "width": 1000,
+        "height": 685,
+        "file_name": "000013.jpg",
+        "license": 0
+      },
+      "sample_annotation": {
+        "id": 1,
+        "image_id": 13,
+        "category_id": 3,
+        "area": 1332.0,
+        "bbox": [
+          454.28,
+          227.22,
+          67.98,
+          30.59
+        ],
+        "iscrowd": 0,
+        "attributes": {
+          "occluded": false
+        },
+        "segmentation_type": "list"
+      },
+      "sample_file_name": "000013.jpg",
+      "ann_count_histogram": {
+        "1": 381,
+        "2": 184,
+        "3": 113,
+        "4": 69,
+        "5": 32,
+        "6": 13,
+        "7": 10,
+        "8": 4,
+        "9": 2,
+        "10": 1,
+        "12": 1
+      },
+      "distinct_classes_per_image_histogram": {
+        "1": 504,
+        "2": 206,
+        "3": 80,
+        "4": 19,
+        "5": 1
+      }
+    },
+    "test": {
+      "ann_file": "C:\\Users\\Amar Sai\\Download\\CarDD_release\\CarDD_release\\CarDD_COCO\\annotations\\instances_test2017.json",
+      "top_level_keys": [
+        "annotations",
+        "categories",
+        "images",
+        "info",
+        "licenses"
+      ],
+      "info": {
+        "contributor": "Xinkuang Wang, Wenjing Li, Zhongcheng Wu",
+        "date_created": "2022.05.01",
+        "description": "CarDD for car damage detection in COCO Format.",
+        "url": "https://cardd-ustc.github.io/",
+        "version": "v1.0"
+      },
+      "categories": [
+        {
+          "id": 1,
+          "name": "dent",
+          "supercategory": null
+        },
+        {
+          "id": 2,
+          "name": "scratch",
+          "supercategory": null
+        },
+        {
+          "id": 3,
+          "name": "crack",
+          "supercategory": null
+        },
+        {
+          "id": 4,
+          "name": "glass shatter",
+          "supercategory": null
+        },
+        {
+          "id": 5,
+          "name": "lamp broken",
+          "supercategory": null
+        },
+        {
+          "id": 6,
+          "name": "tire flat",
+          "supercategory": null
+        }
+      ],
+      "num_categories": 6,
+      "num_images_in_json": 374,
+      "num_annotations": 785,
+      "num_image_files_on_disk": 374,
+      "images_with_existing_files": 374,
+      "missing_files_count": 0,
+      "missing_files_sample": [],
+      "images_with_zero_annotations": 0,
+      "images_with_annotations": 374,
+      "multi_annotation_images": 210,
+      "multi_class_images": 140,
+      "annotation_category_counts": {
+        "dent": 236,
+        "scratch": 307,
+        "crack": 70,
+        "glass shatter": 71,
+        "lamp broken": 69,
+        "tire flat": 32
+      },
+      "images_per_category": {
+        "dent": 157,
+        "scratch": 183,
+        "crack": 48,
+        "glass shatter": 71,
+        "lamp broken": 65,
+        "tire flat": 31
+      },
+      "majority_vote_image_labels": {
+        "dent": 128,
+        "scratch": 131,
+        "crack": 21,
+        "glass shatter": 56,
+        "lamp broken": 13,
+        "tire flat": 25
+      },
+      "majority_ties": 71,
+      "sample_image_keys": [
+        "file_name",
+        "height",
+        "id",
+        "license",
+        "width"
+      ],
+      "sample_annotation_keys": [
+        "area",
+        "attributes",
+        "bbox",
+        "category_id",
+        "id",
+        "image_id",
+        "iscrowd",
+        "segmentation"
+      ],
+      "sample_image": {
+        "id": 12,
+        "width": 1000,
+        "height": 667,
+        "file_name": "000012.jpg",
+        "license": 0
+      },
+      "sample_annotation": {
+        "id": 1,
+        "image_id": 12,
+        "category_id": 6,
+        "area": 85783.0,
+        "bbox": [
+          32.61,
+          221.06,
+          331.72,
+          332.82
+        ],
+        "iscrowd": 0,
+        "attributes": {
+          "occluded": false
+        },
+        "segmentation_type": "list"
+      },
+      "sample_file_name": "000012.jpg",
+      "ann_count_histogram": {
+        "1": 164,
+        "2": 105,
+        "3": 47,
+        "4": 40,
+        "5": 7,
+        "6": 8,
+        "7": 1,
+        "8": 1,
+        "12": 1
+      },
+      "distinct_classes_per_image_histogram": {
+        "1": 234,
+        "2": 108,
+        "3": 25,
+        "4": 5,
+        "5": 2
+      }
+    }
+  }
+}

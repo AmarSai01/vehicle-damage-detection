@@ -1,0 +1,96 @@
+# Default project configuration (YAML).
+# Override via environment variables or a local .env file.
+# Do NOT hardcode machine-specific absolute paths here.
+
+project:
+  name: "Vehicle Damage Detection & Classification"
+  version: "1.0.0"
+
+dataset:
+  name: "CarDD"
+  # Verified CarDD_COCO category order by category_id (no invented "no damage" class)
+  # 1 dent, 2 scratch, 3 crack, 4 glass shatter, 5 lamp broken, 6 tire flat
+  classes:
+    - dent
+    - scratch
+    - crack
+    - glass_shatter
+    - lamp_broken
+    - tire_flat
+  # Official display names (match COCO names)
+  class_display_names:
+    dent: "Dent"
+    scratch: "Scratch"
+    crack: "Crack"
+    glass_shatter: "Glass Shatter"
+    lamp_broken: "Lamp Broken"
+    tire_flat: "Tire Flat"
+  label_strategy: "max_total_area"
+  preserve_official_splits: true
+  # Path resolved from DATASET_ROOT env or default below
+  root_env: "DATASET_ROOT"
+  default_root: "./data/CarDD"
+  supported_image_extensions:
+    - ".jpg"
+    - ".jpeg"
+    - ".png"
+    - ".bmp"
+    - ".webp"
+
+split:
+  # Used only when official CarDD_COCO splits are unavailable
+  seed: 42
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+  stratify: true
+  prefer_official_coco_splits: true
+
+preprocessing:
+  image_size: 224
+  # Custom CNN uses [0, 1] scaling; MobileNetV2 uses ImageNet preprocess_input
+  custom_cnn_rescale: 1.0
+  channels: 3
+
+training:
+  batch_size: 32
+  epochs: 50
+  learning_rate: 0.001
+  early_stopping_patience: 10
+  reduce_lr_patience: 5
+  reduce_lr_factor: 0.5
+  min_lr: 0.0000001
+  checkpoint_monitor: "val_accuracy"
+  checkpoint_mode: "max"
+
+models:
+  custom_cnn:
+    filename: "custom_cnn.keras"
+    input_shape: [224, 224, 3]
+  mobilenetv2:
+    filename: "mobilenetv2.keras"
+    input_shape: [224, 224, 3]
+    weights: "imagenet"
+    fine_tune_at: 100
+    head_epochs: 15
+    fine_tune_epochs: 35
+    fine_tune_learning_rate: 0.0001
+
+paths:
+  artifacts_dir: "./ml/artifacts"
+  models_dir: "./ml/artifacts/models"
+  evaluation_dir: "./ml/artifacts/evaluation"
+  splits_dir: "./ml/artifacts/splits"
+  history_dir: "./ml/artifacts/history"
+  checkpoints_dir: "./ml/artifacts/checkpoints"
+  metrics_file: "./ml/artifacts/evaluation/metrics.json"
+  comparison_file: "./ml/artifacts/evaluation/comparison.json"
+
+api:
+  max_upload_size_mb: 10
+  allowed_extensions:
+    - ".jpg"
+    - ".jpeg"
+    - ".png"
+    - ".bmp"
+    - ".webp"
