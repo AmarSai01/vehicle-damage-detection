@@ -1,0 +1,27 @@
+{
+  "root": "C:\\Users\\Amar Sai\\Download\\CarDD_release\\CarDD_release\\CarDD_COCO",
+  "layout": "cardd_coco",
+  "total_images": 4000,
+  "valid_samples": 4000,
+  "class_counts": {
+    "dent": 1173,
+    "scratch": 1324,
+    "crack": 94,
+    "glass_shatter": 653,
+    "lamp_broken": 463,
+    "tire_flat": 293
+  },
+  "missing_or_corrupt": [],
+  "unrecognized_labels": [],
+  "notes": [
+    "Detected official CarDD_COCO layout; preserving published train/val/test splits.",
+    "Classification label strategy: max_total_area (category with largest total COCO area; ties by count then category_id).",
+    "Original annotation JSON and image files were not modified."
+  ],
+  "split_counts": {
+    "train": 2816,
+    "val": 810,
+    "test": 374
+  },
+  "label_strategy": "max_total_area"
+}

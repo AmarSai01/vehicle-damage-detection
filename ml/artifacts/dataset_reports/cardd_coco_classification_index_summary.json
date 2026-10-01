@@ -1,0 +1,50 @@
+{
+  "dataset_root": "C:\\Users\\Amar Sai\\Download\\CarDD_release\\CarDD_release\\CarDD_COCO",
+  "layout": "cardd_coco",
+  "label_strategy": "max_total_area",
+  "source": "cardd_coco_official",
+  "counts": {
+    "train": 2816,
+    "val": 810,
+    "test": 374
+  },
+  "class_distribution": {
+    "train": {
+      "dent": 823,
+      "scratch": 932,
+      "crack": 61,
+      "glass_shatter": 457,
+      "lamp_broken": 333,
+      "tire_flat": 210
+    },
+    "val": {
+      "dent": 241,
+      "scratch": 270,
+      "crack": 25,
+      "glass_shatter": 131,
+      "lamp_broken": 88,
+      "tire_flat": 55
+    },
+    "test": {
+      "dent": 109,
+      "scratch": 122,
+      "crack": 8,
+      "glass_shatter": 65,
+      "lamp_broken": 42,
+      "tire_flat": 28
+    },
+    "all": {
+      "dent": 1173,
+      "scratch": 1324,
+      "crack": 94,
+      "glass_shatter": 653,
+      "lamp_broken": 463,
+      "tire_flat": 293
+    }
+  },
+  "notes": [
+    "Official CarDD train/val/test partitions preserved.",
+    "Image-level labels derived via max total COCO area per category.",
+    "Original CarDD files were not modified."
+  ]
+}
