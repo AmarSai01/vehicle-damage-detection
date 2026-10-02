@@ -47,9 +47,17 @@ interface MetricCardProps {
   hint?: string
   tone?: 'default' | 'cnn' | 'mnv2' | 'accent'
   badge?: string
+  className?: string
 }
 
-export function MetricCard({ label, value, hint, tone = 'default', badge }: MetricCardProps) {
+export function MetricCard({
+  label,
+  value,
+  hint,
+  tone = 'default',
+  badge,
+  className = '',
+}: MetricCardProps) {
   const accent =
     tone === 'cnn'
       ? 'var(--color-cnn)'
@@ -60,12 +68,19 @@ export function MetricCard({ label, value, hint, tone = 'default', badge }: Metr
           : undefined
 
   return (
-    <article className="card card-pad kpi">
-      <div className="flex items-start justify-between gap-2">
-        <p className="section-label m-0" style={accent ? { color: accent } : undefined}>
+    <article className={['card card-pad kpi', className].filter(Boolean).join(' ')}>
+      <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
+        <p className="section-label m-0 min-w-0" style={accent ? { color: accent } : undefined}>
           {label}
         </p>
-        {badge ? <Badge tone={tone === 'cnn' ? 'cnn' : tone === 'mnv2' ? 'mnv2' : 'muted'}>{badge}</Badge> : null}
+        {badge ? (
+          <Badge
+            tone={tone === 'cnn' ? 'cnn' : tone === 'mnv2' ? 'mnv2' : 'muted'}
+            className="shrink-0"
+          >
+            {badge}
+          </Badge>
+        ) : null}
       </div>
       <p className="kpi-value mt-3 tabular-nums">{value}</p>
       {hint ? <p className="m-0 mt-2 text-xs text-[var(--color-ink-muted)]">{hint}</p> : null}

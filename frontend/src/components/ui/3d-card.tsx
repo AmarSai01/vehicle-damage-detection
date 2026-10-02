@@ -14,6 +14,10 @@ const MouseEnterContext = createContext<
   [boolean, React.Dispatch<React.SetStateAction<boolean>>] | undefined
 >(undefined);
 
+const isFinePointer = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(pointer: fine)").matches;
+
 export const CardContainer = ({
   children,
   className,
@@ -25,13 +29,33 @@ export const CardContainer = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMouseEntered, setIsMouseEntered] = useState(false);
+  const touchTimer = useRef<number | null>(null);
 
-  const finePointer = () =>
-    typeof window !== "undefined" &&
-    window.matchMedia("(pointer: fine)").matches;
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const mq = window.matchMedia("(pointer: fine)");
+    const syncIdle = () => {
+      if (mq.matches) {
+        el.classList.remove("card-3d-mobile-idle");
+        el.style.transform = "rotateY(0deg) rotateX(0deg)";
+      } else {
+        el.classList.add("card-3d-mobile-idle");
+      }
+    };
+    syncIdle();
+    mq.addEventListener("change", syncIdle);
+
+    return () => {
+      mq.removeEventListener("change", syncIdle);
+      el.classList.remove("card-3d-mobile-idle");
+      if (touchTimer.current) window.clearTimeout(touchTimer.current);
+    };
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current || !finePointer()) return;
+    if (!containerRef.current || !isFinePointer()) return;
     const { left, top, width, height } =
       containerRef.current.getBoundingClientRect();
     const x = (e.clientX - left - width / 2) / 48;
@@ -40,15 +64,32 @@ export const CardContainer = ({
   };
 
   const handleMouseEnter = () => {
-    if (!finePointer()) return;
+    if (!isFinePointer()) return;
     setIsMouseEntered(true);
   };
 
   const handleMouseLeave = () => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !isFinePointer()) return;
     setIsMouseEntered(false);
     containerRef.current.style.transform = `rotateY(0deg) rotateX(0deg)`;
   };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "mouse" || !containerRef.current) return;
+    const el = containerRef.current;
+    el.classList.remove("card-3d-mobile-idle");
+    el.style.transform = "rotateY(7deg) rotateX(-4deg)";
+    setIsMouseEntered(true);
+    if (touchTimer.current) window.clearTimeout(touchTimer.current);
+    touchTimer.current = window.setTimeout(() => {
+      if (!containerRef.current) return;
+      containerRef.current.style.transform = "rotateY(0deg) rotateX(0deg)";
+      setIsMouseEntered(false);
+      containerRef.current.classList.add("card-3d-mobile-idle");
+      touchTimer.current = null;
+    }, 900);
+  };
+
   return (
     <MouseEnterContext.Provider value={[isMouseEntered, setIsMouseEntered]}>
       <div
@@ -65,6 +106,7 @@ export const CardContainer = ({
           onMouseEnter={handleMouseEnter}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
+          onPointerDown={handlePointerDown}
           className={cn(
             "flex items-center justify-center relative transition-all duration-200 ease-linear",
             className
@@ -120,6 +162,7 @@ export const CardItem = ({
   rotateX?: number | string;
   rotateY?: number | string;
   rotateZ?: number | string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -138,14 +181,16 @@ export const CardItem = ({
     }
   };
 
+  void Tag;
+
   return (
-    <Tag
+    <div
       ref={ref}
       className={cn("w-fit transition duration-200 ease-linear", className)}
       {...rest}
     >
       {children}
-    </Tag>
+    </div>
   );
 };
 

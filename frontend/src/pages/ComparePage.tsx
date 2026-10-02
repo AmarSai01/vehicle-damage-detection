@@ -140,9 +140,9 @@ export function ComparePage() {
 
       {evaluated && cnn && mnv ? (
         <Tabs
-          containerClassName="w-full gap-1 rounded-full border border-[rgba(148,163,184,0.14)] bg-[rgba(7,11,20,0.45)] p-1 sm:w-fit"
+          containerClassName="w-full max-w-full gap-1 rounded-full border border-[rgba(148,163,184,0.14)] bg-[rgba(7,11,20,0.45)] p-1 sm:w-fit"
           activeTabClassName="bg-[rgba(34,211,238,0.18)] dark:bg-[rgba(34,211,238,0.18)]"
-          tabClassName="px-3 py-2 text-sm font-medium sm:px-4"
+          tabClassName="px-2.5 py-2 text-xs font-medium sm:px-4 sm:text-sm"
           contentClassName="mt-5"
           tabs={[
             {

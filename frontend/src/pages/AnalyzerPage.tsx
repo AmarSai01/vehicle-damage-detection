@@ -162,12 +162,14 @@ export function AnalyzerPage() {
 
       <div className="grid min-w-0 gap-6 xl:grid-cols-[1.15fr_0.85fr] xl:items-start">
         <Card className="space-y-5">
-          <div className="flex items-center justify-between gap-2">
-            <div>
+          <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
+            <div className="min-w-0">
               <p className="section-label">1 · Upload</p>
               <h2 className="font-display m-0 mt-1 text-2xl text-[var(--color-ink)]">Vehicle image</h2>
             </div>
-            <Badge tone="accent">Live API</Badge>
+            <Badge tone="accent" className="shrink-0">
+              Live API
+            </Badge>
           </div>
           <ImageUpload
             file={file}
@@ -181,7 +183,7 @@ export function AnalyzerPage() {
             <legend className="px-1 text-sm font-semibold text-[var(--color-ink)]">
               2 · Model selector
             </legend>
-            <div className="mt-2 grid gap-2 sm:grid-cols-3">
+            <div className="mt-2 grid gap-2 md:grid-cols-3">
               {MODEL_OPTIONS.map((opt) => {
                 const available =
                   opt.id === 'both'
