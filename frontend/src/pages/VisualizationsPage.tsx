@@ -13,14 +13,22 @@ import {
 } from 'recharts'
 import { fetchVisualizations } from '../api/client'
 import { ConfusionMatrixHeatmap } from '../components/ConfusionMatrixHeatmap'
-import { PageHeader } from '../components/PageHeader'
+import { PageHeader, SectionHeader } from '../components/PageHeader'
 import { UiState } from '../components/UiState'
-import { CLASS_SUPPORT, LABEL_STRATEGY } from '../data/academicFacts'
+import { Card } from '../components/ui/Card'
+import { CLASS_SUPPORT, LABEL_STRATEGY } from '../content/academicFacts'
 import type { ModelHistoryViz, ModelMetricsViz, VisualizationsPayload } from '../types'
+
+const tooltipStyle = {
+  borderRadius: 12,
+  borderColor: '#243352',
+  background: '#0d1526',
+  color: '#eef3ff',
+}
 
 function Unavailable({ message }: { message?: string }) {
   return (
-    <p className="rounded-xl border border-dashed border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-6 text-sm text-[var(--color-warn)]">
+    <p className="rounded-xl border border-dashed border-[rgba(148,163,184,0.2)] bg-[rgba(7,11,20,0.4)] px-4 py-6 text-sm text-[var(--color-warn)]">
       {message || 'Data not available.'}
     </p>
   )
@@ -43,24 +51,6 @@ function historySeries(hist: ModelHistoryViz) {
   }))
 }
 
-function MetricCard({
-  title,
-  children,
-  caption,
-}: {
-  title: string
-  children: React.ReactNode
-  caption?: string
-}) {
-  return (
-    <section className="panel panel-pad min-w-0">
-      <h2 className="font-display m-0 text-2xl text-[var(--color-ink)]">{title}</h2>
-      {caption && <p className="m-0 mt-1 text-sm text-[var(--color-ink-muted)]">{caption}</p>}
-      <div className="mt-4 min-w-0">{children}</div>
-    </section>
-  )
-}
-
 function AcademicNote({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="note-block mt-4">
@@ -75,23 +65,26 @@ function PerClassChart({ metrics }: { metrics: ModelMetricsViz }) {
     return <Unavailable message={metrics.message} />
   }
   const data = metrics.per_class.map((row) => ({
-    name: row.class_name.replace('Glass Shatter', 'Glass').replace('Lamp Broken', 'Lamp').replace('Tire Flat', 'Tire'),
+    name: row.class_name
+      .replace('Glass Shatter', 'Glass')
+      .replace('Lamp Broken', 'Lamp')
+      .replace('Tire Flat', 'Tire'),
     Precision: pct(row.precision),
     Recall: pct(row.recall),
     F1: pct(row.f1),
   }))
   return (
-    <div className="h-80 w-full min-w-0">
+    <div className="chart-frame h-80 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ left: 4, right: 8, top: 8 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e2ddd4" />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.14)" />
           <XAxis dataKey="name" tick={{ fontSize: 11 }} />
           <YAxis domain={[0, 100]} unit="%" tick={{ fontSize: 11 }} />
-          <Tooltip contentStyle={{ borderRadius: 12, borderColor: '#e2ddd4' }} />
+          <Tooltip contentStyle={tooltipStyle} />
           <Legend />
-          <Bar dataKey="Precision" fill="#1d4e89" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="Recall" fill="#0d7377" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="F1" fill="#b45309" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="Precision" fill="#60a5fa" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="Recall" fill="#2dd4bf" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="F1" fill="#fbbf24" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -109,13 +102,13 @@ function HistoryCharts({ hist }: { hist: ModelHistoryViz }) {
         <p className="mb-2 text-sm font-semibold">Accuracy (%)</p>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2ddd4" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.14)" />
             <XAxis dataKey="epoch" tick={{ fontSize: 11 }} />
             <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
-            <Tooltip contentStyle={{ borderRadius: 12, borderColor: '#e2ddd4' }} />
+            <Tooltip contentStyle={tooltipStyle} />
             <Legend />
-            <Line type="monotone" dataKey="train_acc" name="Train" stroke="#1d4e89" dot={false} strokeWidth={2} />
-            <Line type="monotone" dataKey="val_acc" name="Validation" stroke="#0d7377" dot={false} strokeWidth={2} />
+            <Line type="monotone" dataKey="train_acc" name="Train" stroke="#60a5fa" dot={false} strokeWidth={2} />
+            <Line type="monotone" dataKey="val_acc" name="Validation" stroke="#2dd4bf" dot={false} strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -123,13 +116,13 @@ function HistoryCharts({ hist }: { hist: ModelHistoryViz }) {
         <p className="mb-2 text-sm font-semibold">Loss</p>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2ddd4" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.14)" />
             <XAxis dataKey="epoch" tick={{ fontSize: 11 }} />
             <YAxis tick={{ fontSize: 11 }} />
-            <Tooltip contentStyle={{ borderRadius: 12, borderColor: '#e2ddd4' }} />
+            <Tooltip contentStyle={tooltipStyle} />
             <Legend />
-            <Line type="monotone" dataKey="train_loss" name="Train" stroke="#1d4e89" dot={false} strokeWidth={2} />
-            <Line type="monotone" dataKey="val_loss" name="Validation" stroke="#0d7377" dot={false} strokeWidth={2} />
+            <Line type="monotone" dataKey="train_loss" name="Train" stroke="#60a5fa" dot={false} strokeWidth={2} />
+            <Line type="monotone" dataKey="val_loss" name="Validation" stroke="#2dd4bf" dot={false} strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -169,7 +162,9 @@ export function VisualizationsPage() {
   const resourceBars = useMemo(() => {
     const cnn = data?.comparison?.models?.custom_cnn
     const mnv = data?.comparison?.models?.mobilenetv2
-    if (!cnn || !mnv || cnn.status !== 'evaluated' || mnv.status !== 'evaluated') return { latency: [], size: [], params: [] }
+    if (!cnn || !mnv || cnn.status !== 'evaluated' || mnv.status !== 'evaluated') {
+      return { latency: [], size: [], params: [] }
+    }
     return {
       latency: [
         {
@@ -196,8 +191,7 @@ export function VisualizationsPage() {
   }, [data])
 
   const crackSupportFromApi = useMemo(() => {
-    const rows =
-      data?.metrics.mobilenetv2.per_class ?? data?.metrics.custom_cnn.per_class ?? []
+    const rows = data?.metrics.mobilenetv2.per_class ?? data?.metrics.custom_cnn.per_class ?? []
     const crack = rows.find((r) => r.class_id === 'crack')
     return crack?.support ?? CLASS_SUPPORT.crack.test
   }, [data])
@@ -205,8 +199,9 @@ export function VisualizationsPage() {
   return (
     <div className="page-shell section-stack">
       <PageHeader
+        kicker="Analytics dashboard"
         title="Visualizations"
-        subtitle="Academic plots generated from existing evaluation and training artifacts. Every value is loaded from the API — nothing is hard-coded in the UI. Charts below are unchanged; captions explain how to interpret them in a viva."
+        subtitle="Academic plots from existing evaluation and training artifacts. Every value is loaded from the API — chart data is unchanged."
       />
 
       {loading && (
@@ -222,10 +217,12 @@ export function VisualizationsPage() {
 
       {data && (
         <>
-          <MetricCard
-            title="1. Confusion matrices"
-            caption="Held-out CarDD test set. Counts come from custom_cnn_metrics.json and mobilenetv2_metrics.json."
-          >
+          <Card>
+            <SectionHeader
+              eyebrow="Section 1"
+              title="Confusion matrices"
+              description="Held-out CarDD test set. Counts from custom_cnn_metrics.json and mobilenetv2_metrics.json."
+            />
             <div className="grid min-w-0 gap-8 lg:grid-cols-2">
               {data.metrics.custom_cnn.available && data.metrics.custom_cnn.confusion_matrix ? (
                 <ConfusionMatrixHeatmap
@@ -248,25 +245,19 @@ export function VisualizationsPage() {
             </div>
             <AcademicNote title="How to read a confusion matrix">
               <p>
-                <strong className="text-[var(--color-ink)]">Diagonal</strong> cells (true class =
-                predicted class) are correct predictions. Larger diagonal values are better.
-              </p>
-              <p>
-                <strong className="text-[var(--color-ink)]">Off-diagonal</strong> cells are mistakes:
-                the row is the true label and the column is what the model predicted instead (for
-                example, true scratch predicted as dent).
-              </p>
-              <p>
-                Compare the two matrices for the same test set: differences show where transfer
-                learning helps or where both models still confuse similar damage types.
+                <strong className="text-[var(--color-ink)]">Diagonal</strong> cells are correct
+                predictions. <strong className="text-[var(--color-ink)]">Off-diagonal</strong> cells
+                are mistakes (row = true, column = predicted).
               </p>
             </AcademicNote>
-          </MetricCard>
+          </Card>
 
-          <MetricCard
-            title="2. Per-class performance"
-            caption="Precision, recall, and F1 for each CarDD class on the held-out test split (not macro-averaged into one number)."
-          >
+          <Card>
+            <SectionHeader
+              eyebrow="Section 2"
+              title="Per-class performance"
+              description="Precision, recall, and F1 for each CarDD class on the held-out test split."
+            />
             <div className="grid min-w-0 gap-8 lg:grid-cols-2">
               <div className="min-w-0">
                 <p className="mb-2 text-sm font-semibold">Custom CNN</p>
@@ -279,28 +270,22 @@ export function VisualizationsPage() {
             </div>
             <AcademicNote title="Class-wise results and the crack limitation">
               <p>
-                These bars show how each damage type behaves on its own. A model can have solid
-                overall accuracy while still failing a rare class.
-              </p>
-              <p>
                 <strong className="text-[var(--color-ink)]">Crack</strong> has only{' '}
                 <strong className="text-[var(--color-ink)]">{crackSupportFromApi}</strong> test
-                images after image-level{' '}
-                <code className="rounded bg-white/70 px-1 text-xs">{LABEL_STRATEGY}</code> labeling.
-                With so few examples, precision/recall/F1 for crack are unstable and often weak —
-                that is a real data limitation, not a chart bug.
-              </p>
-              <p>
-                Prefer discussing frequent classes (dent, scratch, glass shatter, etc.) alongside
-                this caveat when presenting viva results.
+                images after{' '}
+                <code className="rounded bg-white/5 px-1 text-xs">{LABEL_STRATEGY}</code> labeling —
+                scores for crack are unstable and often weak. That is a data limitation, not a chart
+                bug.
               </p>
             </AcademicNote>
-          </MetricCard>
+          </Card>
 
-          <MetricCard
-            title="3. Training history"
-            caption="Mapped from history JSON keys: accuracy / val_accuracy / loss / val_loss over epochs."
-          >
+          <Card>
+            <SectionHeader
+              eyebrow="Section 3"
+              title="Training history"
+              description="Mapped from history JSON keys: accuracy / val_accuracy / loss / val_loss."
+            />
             <div className="space-y-8">
               <div>
                 <p className="mb-2 text-sm font-semibold">Custom CNN</p>
@@ -313,29 +298,19 @@ export function VisualizationsPage() {
             </div>
             <AcademicNote title="Training vs validation curves">
               <p>
-                <strong className="text-[var(--color-ink)]">Train</strong> curves show performance on
-                data the model sees while learning.{' '}
-                <strong className="text-[var(--color-ink)]">Validation</strong> curves show
-                performance on held-out images used to monitor generalization during training.
-              </p>
-              <p>
-                Rising train accuracy with falling train loss is expected. Watch validation together:
-                if train keeps improving while validation stalls or worsens (a growing{' '}
-                <strong className="text-[var(--color-ink)]">gap</strong>), that can indicate
-                overfitting — memorizing train patterns that do not transfer as well.
-              </p>
-              <p>
-                Final model quality for this project is judged on the separate held-out{' '}
-                <strong className="text-[var(--color-ink)]">test</strong> metrics (comparison /
-                confusion matrices), not on a single training epoch alone.
+                A growing gap where train improves while validation stalls can indicate overfitting.
+                Final quality is judged on held-out <strong className="text-[var(--color-ink)]">test</strong>{' '}
+                metrics.
               </p>
             </AcademicNote>
-          </MetricCard>
+          </Card>
 
-          <MetricCard
-            title="4. Model comparison"
-            caption="Overall test metrics and resource profile from comparison.json."
-          >
+          <Card>
+            <SectionHeader
+              eyebrow="Section 4"
+              title="Model comparison"
+              description="Overall test metrics and resource profile from comparison.json."
+            />
             {!data.comparison?.available || comparisonBars.length === 0 ? (
               <Unavailable message={data.comparison?.message || 'Comparison data not available.'} />
             ) : (
@@ -344,13 +319,13 @@ export function VisualizationsPage() {
                   <p className="mb-2 text-sm font-semibold">Quality metrics (%)</p>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={comparisonBars}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2ddd4" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.14)" />
                       <XAxis dataKey="metric" tick={{ fontSize: 12 }} />
                       <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
-                      <Tooltip contentStyle={{ borderRadius: 12, borderColor: '#e2ddd4' }} />
+                      <Tooltip contentStyle={tooltipStyle} />
                       <Legend />
-                      <Bar dataKey="Custom CNN" fill="#1d4e89" radius={[6, 6, 0, 0]} />
-                      <Bar dataKey="MobileNetV2" fill="#0d7377" radius={[6, 6, 0, 0]} />
+                      <Bar dataKey="Custom CNN" fill="#60a5fa" radius={[6, 6, 0, 0]} />
+                      <Bar dataKey="MobileNetV2" fill="#2dd4bf" radius={[6, 6, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -360,19 +335,19 @@ export function VisualizationsPage() {
                     { title: 'Model size', rows: resourceBars.size },
                     { title: 'Parameters', rows: resourceBars.params },
                   ].map(({ title, rows }) => (
-                    <div key={title} className="h-40">
+                    <div key={title} className="chart-frame h-40">
                       <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-muted)]">
                         {title}
                       </p>
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={rows} layout="vertical" margin={{ left: 8, right: 16 }}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#e2ddd4" />
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.14)" />
                           <XAxis type="number" tick={{ fontSize: 11 }} />
                           <YAxis type="category" dataKey="metric" width={90} tick={{ fontSize: 10 }} />
-                          <Tooltip contentStyle={{ borderRadius: 12, borderColor: '#e2ddd4' }} />
+                          <Tooltip contentStyle={tooltipStyle} />
                           <Legend />
-                          <Bar dataKey="Custom CNN" fill="#1d4e89" radius={[0, 6, 6, 0]} />
-                          <Bar dataKey="MobileNetV2" fill="#0d7377" radius={[0, 6, 6, 0]} />
+                          <Bar dataKey="Custom CNN" fill="#60a5fa" radius={[0, 6, 6, 0]} />
+                          <Bar dataKey="MobileNetV2" fill="#2dd4bf" radius={[0, 6, 6, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
@@ -383,9 +358,9 @@ export function VisualizationsPage() {
             <p className="mt-4 text-sm text-[var(--color-ink-muted)]">
               In this experiment MobileNetV2 reaches higher test accuracy with a much smaller
               artifact, while the Custom CNN remains the from-scratch baseline. Neither model is
-              claimed to be universally superior — report only what these evaluation artifacts show.
+              claimed to be universally superior.
             </p>
-          </MetricCard>
+          </Card>
         </>
       )}
     </div>

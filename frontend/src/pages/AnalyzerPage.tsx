@@ -15,6 +15,10 @@ import { PageHeader } from '../components/PageHeader'
 import { PredictionCard } from '../components/PredictionCard'
 import { StatusBanner } from '../components/StatusBanner'
 import { UiState } from '../components/UiState'
+import { Badge } from '../components/ui/Badge'
+import { Button } from '../components/ui/Button'
+import { Card } from '../components/ui/Card'
+import { GlowingEffect } from '../components/ui/glowing-effect'
 import type { ModelPrediction, ModelStatus, PredictModelSelection } from '../types'
 
 const MODEL_OPTIONS: { id: PredictModelSelection; label: string; hint: string }[] = [
@@ -22,6 +26,13 @@ const MODEL_OPTIONS: { id: PredictModelSelection; label: string; hint: string }[
   { id: 'mobilenetv2', label: 'MobileNetV2', hint: 'ImageNet transfer learning' },
   { id: 'both', label: 'Compare both', hint: 'Side-by-side real inference' },
 ]
+
+const tooltipStyle = {
+  borderRadius: 12,
+  borderColor: '#243352',
+  background: '#0d1526',
+  color: '#eef3ff',
+}
 
 export function AnalyzerPage() {
   const [file, setFile] = useState<File | null>(null)
@@ -83,10 +94,28 @@ export function AnalyzerPage() {
 
   const onAnalyze = async () => {
     if (!file) return
+    const MIN_LOADER_MS = 2500
     setLoading(true)
     setError(null)
+    setPrediction(null)
+    setCnnPrediction(null)
+    setMnvPrediction(null)
+
+    const started = performance.now()
+    const waitForMinimumLoader = async () => {
+      const remaining = Math.max(0, MIN_LOADER_MS - (performance.now() - started))
+      if (remaining > 0) {
+        await new Promise<void>((resolve) => {
+          window.setTimeout(resolve, remaining)
+        })
+      }
+    }
+
     try {
+      // Real API starts immediately; loader stays at least MIN_LOADER_MS
       const res = await predictImage(file, model)
+      await waitForMinimumLoader()
+
       if (model === 'both') {
         setCnnPrediction(res.custom_cnn ?? null)
         setMnvPrediction(res.mobilenetv2 ?? null)
@@ -101,6 +130,7 @@ export function AnalyzerPage() {
       }
       await refreshStatus()
     } catch (err) {
+      await waitForMinimumLoader()
       setPrediction(null)
       setCnnPrediction(null)
       setMnvPrediction(null)
@@ -123,6 +153,7 @@ export function AnalyzerPage() {
   return (
     <div className="page-shell section-stack">
       <PageHeader
+        kicker="Interactive workspace"
         title="Damage Analyzer"
         subtitle="Upload a vehicle image, choose a trained model (or compare both), and run real inference from the `.keras` artifacts — not placeholders."
       />
@@ -130,19 +161,23 @@ export function AnalyzerPage() {
       <StatusBanner apiOk={apiOk} models={modelStatus} message={apiMessage} />
 
       <div className="grid min-w-0 gap-6 xl:grid-cols-[1.15fr_0.85fr] xl:items-start">
-        <div className="panel panel-pad min-w-0 space-y-5">
-          <div>
-            <p className="section-label">1 · Upload</p>
-            <h2 className="font-display m-0 mt-1 text-2xl text-[var(--color-ink)]">Vehicle image</h2>
+        <Card className="space-y-5">
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <p className="section-label">1 · Upload</p>
+              <h2 className="font-display m-0 mt-1 text-2xl text-[var(--color-ink)]">Vehicle image</h2>
+            </div>
+            <Badge tone="accent">Live API</Badge>
           </div>
           <ImageUpload
             file={file}
             previewUrl={previewUrl}
             onFileChange={onFileChange}
             disabled={loading}
+            analyzing={loading}
           />
 
-          <fieldset className="min-w-0 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)]/60 p-4">
+          <fieldset className="min-w-0 rounded-xl border border-[rgba(148,163,184,0.16)] bg-[rgba(7,11,20,0.4)] p-4">
             <legend className="px-1 text-sm font-semibold text-[var(--color-ink)]">
               2 · Model selector
             </legend>
@@ -158,8 +193,8 @@ export function AnalyzerPage() {
                     className={[
                       'cursor-pointer rounded-xl border px-3.5 py-3 transition',
                       model === opt.id
-                        ? 'border-[var(--color-accent)] bg-[var(--color-accent-soft)] shadow-[inset_0_0_0_1px_rgba(13,115,119,0.15)]'
-                        : 'border-[var(--color-line)] bg-white/70 hover:bg-white',
+                        ? 'border-cyan-300/50 bg-[rgba(34,211,238,0.12)] shadow-[inset_0_0_0_1px_rgba(34,211,238,0.2)]'
+                        : 'border-[rgba(148,163,184,0.16)] bg-white/[0.02] hover:bg-white/[0.04]',
                     ].join(' ')}
                   >
                     <input
@@ -188,24 +223,22 @@ export function AnalyzerPage() {
           </fieldset>
 
           <div className="flex flex-wrap items-center gap-3">
-            <button
-              type="button"
+            <Button
+              variant="primary"
               onClick={() => void onAnalyze()}
               disabled={!file || loading || apiOk === false || !selectedAvailable}
-              className="btn btn-primary"
             >
               {loading ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
               {loading ? 'Analyzing…' : 'Analyze'}
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="secondary"
               onClick={reset}
               disabled={loading || (!file && !prediction && !hasBothResults)}
-              className="btn btn-secondary"
             >
               <RotateCcw size={16} />
               Clear
-            </button>
+            </Button>
           </div>
 
           {error && (
@@ -217,7 +250,7 @@ export function AnalyzerPage() {
             Confidence on a single image is not held-out test accuracy. Compare model quality on the
             Results page.
           </p>
-        </div>
+        </Card>
 
         <aside className="min-w-0 space-y-4 xl:sticky xl:top-24">
           <div>
@@ -227,22 +260,24 @@ export function AnalyzerPage() {
 
           {model === 'both' ? (
             <div className="space-y-4">
-              <PredictionCard
-                title="Custom CNN"
-                accent="cnn"
-                result={cnnPrediction}
-                loading={loading}
-              />
-              <PredictionCard
-                title="MobileNetV2"
-                accent="mnv2"
-                result={mnvPrediction}
-                loading={loading}
-              />
+              <PredictionCard title="Custom CNN" accent="cnn" result={cnnPrediction} loading={loading} />
+              <PredictionCard title="MobileNetV2" accent="mnv2" result={mnvPrediction} loading={loading} />
             </div>
           ) : (
             <>
-              <div className="panel panel-pad min-w-0">
+              <Card className={prediction?.available ? 'relative' : ''}>
+                {prediction?.available && (
+                  <GlowingEffect
+                    glow
+                    disabled={false}
+                    spread={55}
+                    proximity={80}
+                    inactiveZone={0.15}
+                    borderWidth={2}
+                    movementDuration={1.5}
+                    className="[filter:sepia(1)_saturate(2.8)_hue-rotate(165deg)] [&_.glow]:after:!opacity-[0.85]"
+                  />
+                )}
                 <p className="section-label">Prediction result</p>
                 {loading && (
                   <p className="mt-4 flex items-center gap-2 text-sm text-[var(--color-ink-muted)]">
@@ -276,7 +311,7 @@ export function AnalyzerPage() {
                       </p>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="rounded-xl bg-[var(--color-surface)] px-3 py-2.5">
+                      <div className="rounded-xl border border-[rgba(148,163,184,0.12)] bg-[rgba(7,11,20,0.45)] px-3 py-2.5">
                         <p className="m-0 text-xs text-[var(--color-ink-muted)]">Confidence</p>
                         <p className="m-0 text-lg font-semibold tabular-nums">
                           {prediction.confidence != null
@@ -284,7 +319,7 @@ export function AnalyzerPage() {
                             : '—'}
                         </p>
                       </div>
-                      <div className="rounded-xl bg-[var(--color-surface)] px-3 py-2.5">
+                      <div className="rounded-xl border border-[rgba(148,163,184,0.12)] bg-[rgba(7,11,20,0.45)] px-3 py-2.5">
                         <p className="m-0 text-xs text-[var(--color-ink-muted)]">Inference</p>
                         <p className="m-0 text-lg font-semibold tabular-nums">
                           {prediction.inference_time_ms != null
@@ -295,47 +330,45 @@ export function AnalyzerPage() {
                     </div>
                   </div>
                 )}
-              </div>
+              </Card>
 
               {chartData.length > 0 && prediction?.available && (
-                <div className="panel panel-pad min-w-0">
+                <Card>
                   <p className="m-0 text-sm font-semibold text-[var(--color-ink)]">
                     Class probability distribution
                   </p>
                   <div className="chart-frame mt-3 h-64 w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData} layout="vertical" margin={{ left: 8, right: 12 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#e2ddd4" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.14)" />
                         <XAxis type="number" domain={[0, 100]} unit="%" tick={{ fontSize: 11 }} />
                         <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 11 }} />
                         <Tooltip
                           formatter={(value) => [`${value}%`, 'Probability']}
-                          contentStyle={{ borderRadius: 12, borderColor: '#e2ddd4' }}
+                          contentStyle={tooltipStyle}
                         />
-                        <Bar dataKey="probability" fill="#0d7377" radius={[0, 6, 6, 0]} />
+                        <Bar dataKey="probability" fill="#22d3ee" radius={[0, 6, 6, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
-                </div>
+                </Card>
               )}
             </>
           )}
         </aside>
       </div>
 
-      <details className="panel panel-pad text-sm text-[var(--color-ink-muted)]">
+      <details className="card card-pad text-sm text-[var(--color-ink-muted)]">
         <summary className="cursor-pointer font-semibold text-[var(--color-ink)]">Demo tips</summary>
         <ul className="mt-3 list-disc space-y-1.5 pl-5">
-          <li>
-            Use your own authorized vehicle photos (this app does not ship CarDD sample images).
-          </li>
+          <li>Use your own authorized vehicle photos (this app does not ship CarDD sample images).</li>
           <li>
             For a viva, try <strong className="text-[var(--color-ink)]">Compare both</strong> on the
             same image, then open Results / Visualizations for held-out test metrics.
           </li>
           <li>
-            Confidence and latency below are for <em>this upload only</em> — they are not the
-            project’s test-set accuracy.
+            Confidence and latency are for <em>this upload only</em> — they are not the project’s
+            test-set accuracy.
           </li>
           <li>High confidence does not guarantee a correct class; treat outputs as assistive.</li>
         </ul>

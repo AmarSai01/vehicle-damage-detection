@@ -57,8 +57,8 @@ export function ComparisonTable({ comparison, loading, error }: Props) {
   const mnv = comparison.models.mobilenetv2
 
   return (
-    <div className="panel animate-fade-up overflow-hidden">
-      <div className="border-b border-[var(--color-line)] px-5 py-4">
+    <div className="card animate-fade-up overflow-hidden">
+      <div className="border-b border-[rgba(148,163,184,0.12)] px-5 py-4">
         <h3 className="font-display m-0 text-2xl text-[var(--color-ink)]">Side-by-side metrics</h3>
         <p className="m-0 mt-1 text-sm text-[var(--color-ink-muted)]">
           Held-out test split — values from the evaluation artifact only.
@@ -66,7 +66,7 @@ export function ComparisonTable({ comparison, loading, error }: Props) {
       </div>
       <div className="table-scroll">
         <table className="min-w-full text-left text-sm">
-          <thead className="bg-[var(--color-surface)] text-xs uppercase tracking-wide text-[var(--color-ink-muted)]">
+          <thead className="bg-[rgba(7,11,20,0.55)] text-xs uppercase tracking-wide text-[var(--color-ink-muted)]">
             <tr>
               <th className="px-5 py-3 font-medium">Metric</th>
               <th className="px-5 py-3 font-medium text-[var(--color-cnn)]">Custom CNN</th>
@@ -83,15 +83,15 @@ export function ComparisonTable({ comparison, loading, error }: Props) {
                 <tr
                   key={row.key}
                   className={[
-                    'border-t border-[var(--color-line)]',
-                    idx % 2 === 1 ? 'bg-white/40' : '',
+                    'border-t border-[rgba(148,163,184,0.1)]',
+                    idx % 2 === 1 ? 'bg-white/[0.02]' : '',
                   ].join(' ')}
                 >
                   <td className="px-5 py-3 font-medium text-[var(--color-ink)]">{row.label}</td>
-                  <td className="px-5 py-3 tabular-nums">
+                  <td className="px-5 py-3 tabular-nums text-[var(--color-ink)]">
                     {cnn.status === 'evaluated' ? fmt(cnnVal, row.kind) : 'Not trained yet.'}
                   </td>
-                  <td className="px-5 py-3 tabular-nums">
+                  <td className="px-5 py-3 tabular-nums text-[var(--color-ink)]">
                     {mnv.status === 'evaluated' ? fmt(mnvVal, row.kind) : 'Not trained yet.'}
                   </td>
                 </tr>

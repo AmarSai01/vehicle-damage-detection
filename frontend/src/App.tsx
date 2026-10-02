@@ -24,8 +24,8 @@ export default function App() {
             <Route path="/about" element={<AboutPage />} />
           </Routes>
         </main>
-        <footer className="mx-auto w-full max-w-6xl border-t border-[var(--color-line)]/70 px-4 py-8 text-center text-xs leading-relaxed text-[var(--color-ink-muted)] sm:px-6">
-          Vehicle Damage Detection &amp; Classification · Academic demonstration · Real Keras
+        <footer className="mx-auto w-full max-w-6xl border-t border-[rgba(148,163,184,0.12)] px-4 py-8 text-center text-xs leading-relaxed text-[var(--color-ink-muted)] sm:px-6">
+          Vehicle Damage Detection &amp; Classification · Academic AI demonstration · Real Keras
           inference · No fabricated predictions
         </footer>
       </div>
