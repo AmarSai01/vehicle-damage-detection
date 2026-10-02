@@ -1,5 +1,7 @@
 import type { ModelPrediction } from '../types'
 import { AlertCircle, Clock3, Gauge, Loader2 } from 'lucide-react'
+import { Badge } from './ui/Badge'
+import { ProgressBar } from './ui/ProgressBar'
 
 interface Props {
   title: string
@@ -13,10 +15,13 @@ export function PredictionCard({ title, accent, result, loading }: Props) {
 
   if (loading) {
     return (
-      <article className="panel panel-pad min-w-0">
-        <p className="section-label" style={{ color: accentColor }}>
-          {title}
-        </p>
+      <article className="card card-pad min-w-0">
+        <div className="flex items-center justify-between gap-2">
+          <p className="section-label m-0" style={{ color: accentColor }}>
+            {title}
+          </p>
+          <Badge tone={accent}>Running</Badge>
+        </div>
         <p className="mt-4 flex items-center gap-2 text-sm text-[var(--color-ink-muted)]">
           <Loader2 size={16} className="animate-spin" />
           Running inference…
@@ -27,8 +32,8 @@ export function PredictionCard({ title, accent, result, loading }: Props) {
 
   if (!result) {
     return (
-      <article className="panel panel-pad min-w-0 border-dashed">
-        <p className="section-label" style={{ color: accentColor }}>
+      <article className="card card-pad min-w-0 border-dashed">
+        <p className="section-label m-0" style={{ color: accentColor }}>
           {title}
         </p>
         <p className="mt-4 text-sm text-[var(--color-ink-muted)]">
@@ -40,8 +45,8 @@ export function PredictionCard({ title, accent, result, loading }: Props) {
 
   if (!result.available) {
     return (
-      <article className="panel panel-pad min-w-0">
-        <p className="section-label" style={{ color: accentColor }}>
+      <article className="card card-pad min-w-0">
+        <p className="section-label m-0" style={{ color: accentColor }}>
           {title}
         </p>
         <div className="mt-4 flex items-start gap-2 text-[var(--color-warn)]">
@@ -58,36 +63,36 @@ export function PredictionCard({ title, accent, result, loading }: Props) {
     result.confidence != null ? `${(result.confidence * 100).toFixed(1)}%` : '—'
 
   return (
-    <article className="panel panel-pad animate-fade-up min-w-0">
-      <p className="section-label" style={{ color: accentColor }}>
-        {title}
-      </p>
+    <article className="card card-pad animate-fade-up min-w-0">
+      <div className="flex items-center justify-between gap-2">
+        <p className="section-label m-0" style={{ color: accentColor }}>
+          {title}
+        </p>
+        <Badge tone={accent}>Live</Badge>
+      </div>
       <h3 className="font-display mt-3 text-3xl leading-none text-[var(--color-ink)]">
         {result.class ?? '—'}
       </h3>
       <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded-xl bg-[var(--color-surface)] px-3 py-2.5">
+        <div className="rounded-xl border border-[rgba(148,163,184,0.12)] bg-[rgba(7,11,20,0.45)] px-3 py-2.5">
           <p className="m-0 flex items-center gap-1 text-xs text-[var(--color-ink-muted)]">
             <Gauge size={12} /> Confidence
           </p>
-          <p className="m-0 mt-1 text-lg font-semibold">{confidencePct}</p>
+          <p className="m-0 mt-1 text-lg font-semibold tabular-nums">{confidencePct}</p>
           {result.confidence != null && (
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--color-line)]">
-              <div
-                className="h-full rounded-full transition-all"
-                style={{
-                  width: `${Math.max(2, result.confidence * 100)}%`,
-                  background: accentColor,
-                }}
-              />
-            </div>
+            <ProgressBar
+              className="mt-2"
+              value={result.confidence * 100}
+              color={accentColor}
+              label={`${title} confidence`}
+            />
           )}
         </div>
-        <div className="rounded-xl bg-[var(--color-surface)] px-3 py-2.5">
+        <div className="rounded-xl border border-[rgba(148,163,184,0.12)] bg-[rgba(7,11,20,0.45)] px-3 py-2.5">
           <p className="m-0 flex items-center gap-1 text-xs text-[var(--color-ink-muted)]">
             <Clock3 size={12} /> Inference
           </p>
-          <p className="m-0 mt-1 text-lg font-semibold">
+          <p className="m-0 mt-1 text-lg font-semibold tabular-nums">
             {result.inference_time_ms != null
               ? `${result.inference_time_ms.toFixed(1)} ms`
               : '—'}
@@ -95,7 +100,7 @@ export function PredictionCard({ title, accent, result, loading }: Props) {
         </div>
       </div>
       {result.probabilities && (
-        <ul className="mt-4 space-y-2">
+        <ul className="mt-4 space-y-2.5">
           {Object.entries(result.probabilities)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 6)
@@ -103,18 +108,9 @@ export function PredictionCard({ title, accent, result, loading }: Props) {
               <li key={label} className="min-w-0">
                 <div className="mb-1 flex items-center justify-between gap-2 text-xs">
                   <span className="truncate text-[var(--color-ink-muted)]">{label}</span>
-                  <span className="shrink-0 font-medium">{(p * 100).toFixed(1)}%</span>
+                  <span className="shrink-0 font-medium tabular-nums">{(p * 100).toFixed(1)}%</span>
                 </div>
-                <div className="h-1 overflow-hidden rounded-full bg-[var(--color-line)]">
-                  <div
-                    className="h-full rounded-full"
-                    style={{
-                      width: `${Math.max(1, p * 100)}%`,
-                      background: accentColor,
-                      opacity: 0.75,
-                    }}
-                  />
-                </div>
+                <ProgressBar value={p * 100} color={accentColor} label={label} />
               </li>
             ))}
         </ul>

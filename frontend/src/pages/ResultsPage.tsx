@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchComparison, fetchVisualizations } from '../api/client'
-import { PageHeader } from '../components/PageHeader'
+import { PageHeader, MetricCard, SectionHeader } from '../components/PageHeader'
 import { UiState } from '../components/UiState'
-import { LABEL_STRATEGY, SPLIT_COUNTS } from '../data/academicFacts'
+import { Card } from '../components/ui/Card'
+import { Badge } from '../components/ui/Badge'
+import { LABEL_STRATEGY, SPLIT_COUNTS } from '../content/academicFacts'
 import type { ComparisonData, PerClassMetric, VisualizationsPayload } from '../types'
 
 function fmtPct(v: number | null | undefined) {
@@ -58,22 +60,18 @@ export function ResultsPage() {
       viz.metrics.mobilenetv2.num_samples ??
       viz.metrics.custom_cnn.num_samples ??
       SPLIT_COUNTS.test
-    return {
-      testN,
-      cnnCrack,
-      mnvCrack,
-    }
+    return { testN, cnnCrack, mnvCrack }
   }, [ready, viz])
 
   return (
     <div className="page-shell section-stack">
       <PageHeader
+        kicker="Evaluation dashboard"
         title="Results"
         subtitle={
           <>
             Held-out CarDD test-set evaluation. Values are read from the real{' '}
-            <code className="rounded bg-[var(--color-surface)] px-1 text-xs">comparison.json</code>{' '}
-            artifact.
+            <code className="rounded bg-white/5 px-1 text-xs">comparison.json</code> artifact.
           </>
         }
       />
@@ -88,7 +86,6 @@ export function ResultsPage() {
           {error}
         </UiState>
       )}
-
       {!loading && !error && !ready && (
         <UiState kind="empty" title="Evaluation not ready">
           {comparison?.message || 'Evaluation results will appear after training.'}
@@ -97,9 +94,25 @@ export function ResultsPage() {
 
       {ready && cnn && mnv && (
         <>
-          <section className="panel panel-pad">
-            <h2 className="font-display m-0 text-2xl text-[var(--color-ink)]">Experiment card</h2>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--color-ink-muted)]">
+          <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <MetricCard label="CNN accuracy" value={fmtPct(cnn.accuracy)} tone="cnn" badge="Custom CNN" />
+            <MetricCard label="MobileNet accuracy" value={fmtPct(mnv.accuracy)} tone="mnv2" badge="MobileNetV2" />
+            <MetricCard label="Test images" value={perClassTakeaway?.testN ?? SPLIT_COUNTS.test} tone="accent" />
+            <MetricCard
+              label="Size advantage"
+              value={`${fmtNum(mnv.model_size_mb, 1)} MB`}
+              hint={`vs CNN ${fmtNum(cnn.model_size_mb, 1)} MB`}
+              tone="default"
+            />
+          </div>
+
+          <Card>
+            <SectionHeader
+              eyebrow="Experiment"
+              title="Fair comparison setup"
+              description="Both models use the same official split indexes and metrics pipeline."
+            />
+            <ul className="m-0 list-disc space-y-2 pl-5 text-sm text-[var(--color-ink-muted)]">
               <li>
                 Held-out test set:{' '}
                 <strong className="text-[var(--color-ink)]">
@@ -108,34 +121,30 @@ export function ResultsPage() {
                 images (train {SPLIT_COUNTS.train} / val {SPLIT_COUNTS.val}).
               </li>
               <li>
-                Both models evaluated on the <strong className="text-[var(--color-ink)]">same</strong>{' '}
-                split indexes with label strategy{' '}
-                <code className="rounded bg-[var(--color-surface)] px-1 text-xs">{LABEL_STRATEGY}</code>.
+                Label strategy{' '}
+                <code className="rounded bg-white/5 px-1 text-xs">{LABEL_STRATEGY}</code>.
               </li>
               <li>
-                Aggregate metrics below are served from{' '}
-                <code className="rounded bg-[var(--color-surface)] px-1 text-xs">/api/comparison</code>{' '}
-                (backed by{' '}
-                <code className="rounded bg-[var(--color-surface)] px-1 text-xs">comparison.json</code>
-                ).
+                Aggregate metrics from{' '}
+                <code className="rounded bg-white/5 px-1 text-xs">/api/comparison</code>.
               </li>
               <li>
                 In this experiment MobileNetV2 test accuracy is {fmtPct(mnv.accuracy)} vs Custom CNN{' '}
-                {fmtPct(cnn.accuracy)}; that does not imply universal superiority for every
-                deployment constraint.
+                {fmtPct(cnn.accuracy)}; that does not imply universal superiority.
               </li>
             </ul>
-          </section>
+          </Card>
 
-          <div className="grid min-w-0 gap-4 md:grid-cols-2">
+          <div className="grid min-w-0 gap-4 lg:grid-cols-2">
             {[
-              { title: 'Custom CNN', m: cnn, accent: 'var(--color-cnn)' },
-              { title: 'MobileNetV2', m: mnv, accent: 'var(--color-mnv2)' },
-            ].map(({ title, m, accent }) => (
-              <article key={title} className="panel panel-pad min-w-0">
-                <p className="section-label m-0" style={{ color: accent }}>
-                  {title}
-                </p>
+              { title: 'Custom CNN', m: cnn, tone: 'cnn' as const },
+              { title: 'MobileNetV2', m: mnv, tone: 'mnv2' as const },
+            ].map(({ title, m, tone }) => (
+              <Card key={title}>
+                <div className="flex items-center justify-between gap-2">
+                  <h2 className="font-display m-0 text-2xl text-[var(--color-ink)]">{title}</h2>
+                  <Badge tone={tone}>Evaluated</Badge>
+                </div>
                 <dl className="mt-4 space-y-2.5 text-sm">
                   {[
                     ['Accuracy', fmtPct(m.accuracy)],
@@ -148,29 +157,25 @@ export function ResultsPage() {
                   ].map(([label, value]) => (
                     <div
                       key={label}
-                      className="flex items-baseline justify-between gap-4 border-b border-[var(--color-line)]/70 pb-2 last:border-0 last:pb-0"
+                      className="flex items-baseline justify-between gap-4 border-b border-[rgba(148,163,184,0.1)] pb-2 last:border-0 last:pb-0"
                     >
                       <dt className="text-[var(--color-ink-muted)]">{label}</dt>
-                      <dd className="m-0 font-semibold tabular-nums text-[var(--color-ink)]">
-                        {value}
-                      </dd>
+                      <dd className="m-0 font-semibold tabular-nums text-[var(--color-ink)]">{value}</dd>
                     </div>
                   ))}
                 </dl>
-              </article>
+              </Card>
             ))}
           </div>
 
           {perClassTakeaway && (perClassTakeaway.cnnCrack || perClassTakeaway.mnvCrack) && (
-            <section className="panel panel-pad text-sm leading-relaxed text-[var(--color-ink-muted)]">
+            <Card className="text-sm leading-relaxed text-[var(--color-ink-muted)]">
               <h2 className="font-display m-0 text-2xl text-[var(--color-ink)]">Per-class takeaway</h2>
               <p className="mt-3">
                 Overall, MobileNetV2 is stronger on this test set, but rare classes remain difficult.
                 Crack has only{' '}
                 <strong className="text-[var(--color-ink)]">
-                  {perClassTakeaway.mnvCrack?.support ??
-                    perClassTakeaway.cnnCrack?.support ??
-                    8}
+                  {perClassTakeaway.mnvCrack?.support ?? perClassTakeaway.cnnCrack?.support ?? 8}
                 </strong>{' '}
                 test images after image-level labeling.
               </p>
@@ -179,89 +184,70 @@ export function ResultsPage() {
                   <li>
                     Custom CNN crack — precision {fmtPct(perClassTakeaway.cnnCrack.precision)},
                     recall {fmtPct(perClassTakeaway.cnnCrack.recall)}, F1{' '}
-                    {fmtPct(perClassTakeaway.cnnCrack.f1)} (from evaluation metrics via{' '}
-                    <code className="rounded bg-[var(--color-surface)] px-1 text-xs">
-                      /api/visualizations
-                    </code>
-                    ).
+                    {fmtPct(perClassTakeaway.cnnCrack.f1)}.
                   </li>
                 )}
                 {perClassTakeaway.mnvCrack && (
                   <li>
                     MobileNetV2 crack — precision {fmtPct(perClassTakeaway.mnvCrack.precision)},
                     recall {fmtPct(perClassTakeaway.mnvCrack.recall)}, F1{' '}
-                    {fmtPct(perClassTakeaway.mnvCrack.f1)} (same artifact source).
+                    {fmtPct(perClassTakeaway.mnvCrack.f1)}.
                   </li>
                 )}
                 <li>
                   Low support makes crack scores volatile; treat them as a data limitation, not a UI
-                  bug. See Visualizations for full per-class charts and confusion matrices.
+                  bug.
                 </li>
               </ul>
-            </section>
+            </Card>
           )}
 
-          <section className="panel panel-pad text-sm leading-relaxed text-[var(--color-ink-muted)]">
-            <h2 className="font-display m-0 text-2xl text-[var(--color-ink)]">How to read these metrics</h2>
-            <ul className="mt-3 list-disc space-y-2 pl-5">
-              <li>
-                <strong className="text-[var(--color-ink)]">Accuracy</strong> is overall correct
-                predictions on the held-out test split.
-              </li>
-              <li>
-                <strong className="text-[var(--color-ink)]">Precision / Recall / F1 (macro)</strong>{' '}
-                average per-class scores equally — important because CarDD classes are imbalanced
-                (e.g. crack is rare under the image-level label policy).
-              </li>
-              <li>
-                In this experiment, <strong className="text-[var(--color-ink)]">MobileNetV2</strong>{' '}
-                achieved higher test accuracy ({fmtPct(mnv.accuracy)}) than the Custom CNN (
-                {fmtPct(cnn.accuracy)}), with a much smaller file size. That does not mean it is
-                universally superior for every deployment constraint.
-              </li>
-              <li>
-                The Custom CNN remains a useful academic baseline: it is trained from scratch
-                without ImageNet weights, so the comparison isolates transfer learning benefits.
-              </li>
-            </ul>
-          </section>
-
-          <section className="panel panel-pad text-sm leading-relaxed text-[var(--color-ink-muted)]">
-            <h2 className="font-display m-0 text-2xl text-[var(--color-ink)]">Limitations</h2>
-            <ul className="mt-3 list-disc space-y-2 pl-5">
-              <li>
-                Class imbalance and the{' '}
-                <code className="rounded bg-[var(--color-surface)] px-1 text-xs">{LABEL_STRATEGY}</code>{' '}
-                reduction affect per-class reliability (especially crack).
-              </li>
-              <li>
-                There is no “no damage” class in CarDD; this system only classifies among the six
-                damage types.
-              </li>
-              <li>
-                Live Analyzer confidence on one photo is not a substitute for these held-out test
-                metrics.
-              </li>
-              <li>
-                Academic local demo only — not a certified insurance decision system.
-              </li>
-            </ul>
-            <p className="mt-4">
-              Explore interactive charts on the{' '}
-              <Link to="/compare" className="text-[var(--color-accent)] underline">
-                Comparison
-              </Link>{' '}
-              page, deep-dive plots on{' '}
-              <Link to="/visualizations" className="text-[var(--color-accent)] underline">
-                Visualizations
-              </Link>
-              , or run live inference in the{' '}
-              <Link to="/analyze" className="text-[var(--color-accent)] underline">
-                Analyzer
-              </Link>
-              .
-            </p>
-          </section>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Card className="text-sm leading-relaxed text-[var(--color-ink-muted)]">
+              <h2 className="font-display m-0 text-2xl text-[var(--color-ink)]">How to read these metrics</h2>
+              <ul className="mt-3 list-disc space-y-2 pl-5">
+                <li>
+                  <strong className="text-[var(--color-ink)]">Accuracy</strong> is overall correct
+                  predictions on the held-out test split.
+                </li>
+                <li>
+                  <strong className="text-[var(--color-ink)]">Precision / Recall / F1 (macro)</strong>{' '}
+                  average per-class scores equally — important under class imbalance.
+                </li>
+                <li>
+                  MobileNetV2 achieved higher test accuracy ({fmtPct(mnv.accuracy)}) than Custom CNN (
+                  {fmtPct(cnn.accuracy)}) with a smaller file size in this experiment.
+                </li>
+                <li>
+                  The Custom CNN remains a useful academic baseline without ImageNet weights.
+                </li>
+              </ul>
+            </Card>
+            <Card className="text-sm leading-relaxed text-[var(--color-ink-muted)]">
+              <h2 className="font-display m-0 text-2xl text-[var(--color-ink)]">Limitations</h2>
+              <ul className="mt-3 list-disc space-y-2 pl-5">
+                <li>
+                  Class imbalance and{' '}
+                  <code className="rounded bg-white/5 px-1 text-xs">{LABEL_STRATEGY}</code> labeling
+                  affect per-class reliability (especially crack).
+                </li>
+                <li>No “no damage” class in CarDD.</li>
+                <li>Live Analyzer confidence is not a substitute for these held-out metrics.</li>
+                <li>Academic local demo only — not a certified insurance system.</li>
+              </ul>
+              <p className="mt-4">
+                Continue to{' '}
+                <Link to="/compare" className="text-cyan-300 underline">
+                  Comparison
+                </Link>{' '}
+                or{' '}
+                <Link to="/visualizations" className="text-cyan-300 underline">
+                  Visualizations
+                </Link>
+                .
+              </p>
+            </Card>
+          </div>
         </>
       )}
     </div>
