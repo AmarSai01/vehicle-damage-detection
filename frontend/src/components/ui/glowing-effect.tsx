@@ -117,6 +117,34 @@ const GlowingEffect = memo(
       };
     }, [handleMove, disabled]);
 
+    // Touch / coarse pointers: gentle auto-sweep so the glow stays visible without sticky hover
+    useEffect(() => {
+      if (disabled) return;
+      const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+      if (fine) return;
+
+      const element = containerRef.current;
+      if (!element) return;
+
+      element.style.setProperty("--active", "1");
+      let angle = parseFloat(element.style.getPropertyValue("--start")) || 0;
+      let frame = 0;
+      let last = performance.now();
+
+      const tick = (now: number) => {
+        const dt = now - last;
+        last = now;
+        angle = (angle + dt * 0.035) % 360;
+        element.style.setProperty("--start", String(angle));
+        frame = requestAnimationFrame(tick);
+      };
+      frame = requestAnimationFrame(tick);
+
+      return () => {
+        cancelAnimationFrame(frame);
+      };
+    }, [disabled]);
+
     return (
       <>
         <div

@@ -152,13 +152,17 @@ export function AboutPage() {
         />
 
         {SECTIONS.map((section) => (
-          <Card key={section.title} className="text-sm leading-relaxed text-[var(--color-ink-muted)]">
+          <Card
+            key={section.title}
+            hover
+            className="text-sm leading-relaxed text-[var(--color-ink-muted)]"
+          >
             <h2 className="font-display m-0 text-2xl text-[var(--color-ink)]">{section.title}</h2>
             <div className="mt-3">{section.body}</div>
           </Card>
         ))}
 
-        <Card className="text-sm text-[var(--color-ink-muted)]">
+        <Card hover className="text-sm text-[var(--color-ink-muted)]">
           <h2 className="font-display m-0 text-xl text-[var(--color-ink)]">Academic Disclaimer</h2>
           <p className="m-0 mt-2">
             This is an academic demonstration system for coursework / viva presentation. It is not a
@@ -167,7 +171,7 @@ export function AboutPage() {
           </p>
         </Card>
 
-        <Card className="text-sm text-[var(--color-ink-muted)]">
+        <Card hover className="text-sm text-[var(--color-ink-muted)]">
           <h2 className="font-display m-0 text-xl text-[var(--color-ink)]">Citation</h2>
           <pre className="mt-3 overflow-x-auto whitespace-pre-wrap rounded-xl border border-[rgba(148,163,184,0.12)] bg-[rgba(7,11,20,0.55)] p-4 text-xs text-[var(--color-ink)]">
 {`@ARTICLE{CarDD,

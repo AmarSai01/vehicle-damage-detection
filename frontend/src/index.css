@@ -50,7 +50,13 @@ body {
     radial-gradient(ellipse 55% 40% at 100% 0%, rgba(59, 130, 246, 0.14), transparent 50%),
     radial-gradient(ellipse 50% 35% at 70% 100%, rgba(45, 212, 191, 0.08), transparent 55%),
     linear-gradient(180deg, #070b14 0%, #0a1220 45%, #070b14 100%);
-  background-attachment: fixed;
+  background-attachment: scroll;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body {
+    background-attachment: fixed;
+  }
 }
 
 img,
@@ -406,7 +412,27 @@ a {
   color: #eef3ff !important;
 }
 
+/* Subtle 3D presence on touch devices (desktop still uses pointer tilt) */
+@keyframes card-3d-idle {
+  0%,
+  100% {
+    transform: rotateY(-2.2deg) rotateX(1.2deg);
+  }
+  50% {
+    transform: rotateY(2.2deg) rotateX(-1.2deg);
+  }
+}
+
+.card-3d-mobile-idle {
+  animation: card-3d-idle 5.5s ease-in-out infinite;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .card-3d-mobile-idle {
+    animation: none;
+  }
+
   *,
   *::before,
   *::after {

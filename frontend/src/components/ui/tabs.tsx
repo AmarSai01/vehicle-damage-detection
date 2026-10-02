@@ -39,7 +39,7 @@ export const Tabs = ({
       <div
         role="tablist"
         className={cn(
-          "flex flex-row items-center justify-start [perspective:1000px] relative overflow-x-auto overflow-y-hidden sm:overflow-visible no-visible-scrollbar max-w-full w-full",
+          "flex flex-row items-center justify-start [perspective:1000px] relative overflow-x-auto overflow-y-hidden no-visible-scrollbar max-w-full w-full",
           containerClassName
         )}
       >

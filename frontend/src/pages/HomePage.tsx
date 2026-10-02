@@ -99,7 +99,7 @@ export function HomePage() {
           </div>
         </div>
 
-        <div className="relative z-10 mt-10 grid gap-3 sm:grid-cols-3">
+        <div className="relative z-10 mt-10 grid gap-3 md:grid-cols-3">
           <MetricCard
             label="Custom CNN"
             value={metricsReady ? fmtPct(cnnAcc) : '—'}
@@ -198,7 +198,7 @@ export function HomePage() {
       </section>
 
       <section className="mt-10 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-        <Card>
+        <Card hover>
           <div className="flex items-center gap-2">
             <Layers size={18} className="text-[var(--color-accent)]" />
             <h2 className="font-display m-0 text-xl text-[var(--color-ink)]">Six CarDD classes</h2>
@@ -215,7 +215,7 @@ export function HomePage() {
             details are on the Classes page.
           </p>
         </Card>
-        <Card>
+        <Card hover>
           <h2 className="font-display m-0 text-xl text-[var(--color-ink)]">Technology stack</h2>
           <ul className="m-0 mt-3 list-disc space-y-1.5 pl-5 text-sm text-[var(--color-ink-muted)]">
             <li>Frontend: React, Vite, TypeScript, Tailwind, Recharts</li>
@@ -225,7 +225,7 @@ export function HomePage() {
         </Card>
       </section>
 
-      <section className="mt-10 grid gap-4 sm:grid-cols-3">
+      <section className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {[
           {
             icon: Cpu,
@@ -243,7 +243,7 @@ export function HomePage() {
             body: 'Missing models and API errors are shown clearly — never fabricated predictions.',
           },
         ].map(({ icon: Icon, title, body }) => (
-          <Card key={title}>
+          <Card key={title} hover>
             <Icon className="text-[var(--color-accent)]" size={22} />
             <h2 className="m-0 mt-3 text-base font-semibold text-[var(--color-ink)]">{title}</h2>
             <p className="m-0 mt-2 text-sm text-[var(--color-ink-muted)]">{body}</p>

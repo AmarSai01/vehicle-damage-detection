@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
   Bar,
   BarChart,
@@ -16,8 +16,24 @@ import { ConfusionMatrixHeatmap } from '../components/ConfusionMatrixHeatmap'
 import { PageHeader, SectionHeader } from '../components/PageHeader'
 import { UiState } from '../components/UiState'
 import { Card } from '../components/ui/Card'
+import { HoverBorderGradient } from '../components/ui/hover-border-gradient'
 import { CLASS_SUPPORT, LABEL_STRATEGY } from '../content/academicFacts'
 import type { ModelHistoryViz, ModelMetricsViz, VisualizationsPayload } from '../types'
+
+function ChartSection({ children }: { children: ReactNode }) {
+  return (
+    <HoverBorderGradient
+      as="div"
+      duration={1.6}
+      containerClassName="w-full max-w-full min-w-0 rounded-[1.15rem] border-0 bg-transparent p-px dark:bg-transparent"
+      className="w-full max-w-full min-w-0 rounded-[1.12rem] bg-transparent p-0 text-[var(--color-ink)]"
+    >
+      <Card className="relative z-10 border-0 bg-transparent shadow-none ![box-shadow:none] ![backdrop-filter:none]">
+        {children}
+      </Card>
+    </HoverBorderGradient>
+  )
+}
 
 const tooltipStyle = {
   borderRadius: 12,
@@ -51,7 +67,7 @@ function historySeries(hist: ModelHistoryViz) {
   }))
 }
 
-function AcademicNote({ title, children }: { title: string; children: React.ReactNode }) {
+function AcademicNote({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="note-block mt-4">
       <p className="m-0 font-semibold text-[var(--color-ink)]">{title}</p>
@@ -217,7 +233,7 @@ export function VisualizationsPage() {
 
       {data && (
         <>
-          <Card>
+          <ChartSection>
             <SectionHeader
               eyebrow="Section 1"
               title="Confusion matrices"
@@ -250,9 +266,9 @@ export function VisualizationsPage() {
                 are mistakes (row = true, column = predicted).
               </p>
             </AcademicNote>
-          </Card>
+          </ChartSection>
 
-          <Card>
+          <ChartSection>
             <SectionHeader
               eyebrow="Section 2"
               title="Per-class performance"
@@ -278,9 +294,9 @@ export function VisualizationsPage() {
                 bug.
               </p>
             </AcademicNote>
-          </Card>
+          </ChartSection>
 
-          <Card>
+          <ChartSection>
             <SectionHeader
               eyebrow="Section 3"
               title="Training history"
@@ -303,9 +319,9 @@ export function VisualizationsPage() {
                 metrics.
               </p>
             </AcademicNote>
-          </Card>
+          </ChartSection>
 
-          <Card>
+          <ChartSection>
             <SectionHeader
               eyebrow="Section 4"
               title="Model comparison"
@@ -360,7 +376,7 @@ export function VisualizationsPage() {
               artifact, while the Custom CNN remains the from-scratch baseline. Neither model is
               claimed to be universally superior.
             </p>
-          </Card>
+          </ChartSection>
         </>
       )}
     </div>

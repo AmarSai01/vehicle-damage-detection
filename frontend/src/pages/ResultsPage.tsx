@@ -5,6 +5,7 @@ import { PageHeader, MetricCard, SectionHeader } from '../components/PageHeader'
 import { UiState } from '../components/UiState'
 import { Card } from '../components/ui/Card'
 import { Badge } from '../components/ui/Badge'
+import { CardSpotlight } from '../components/ui/card-spotlight'
 import { LABEL_STRATEGY, SPLIT_COUNTS } from '../content/academicFacts'
 import type { ComparisonData, PerClassMetric, VisualizationsPayload } from '../types'
 
@@ -95,15 +96,49 @@ export function ResultsPage() {
       {ready && cnn && mnv && (
         <>
           <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <MetricCard label="CNN accuracy" value={fmtPct(cnn.accuracy)} tone="cnn" badge="Custom CNN" />
-            <MetricCard label="MobileNet accuracy" value={fmtPct(mnv.accuracy)} tone="mnv2" badge="MobileNetV2" />
-            <MetricCard label="Test images" value={perClassTakeaway?.testN ?? SPLIT_COUNTS.test} tone="accent" />
-            <MetricCard
-              label="Size advantage"
-              value={`${fmtNum(mnv.model_size_mb, 1)} MB`}
-              hint={`vs CNN ${fmtNum(cnn.model_size_mb, 1)} MB`}
-              tone="default"
-            />
+            {(
+              [
+                {
+                  label: 'CNN accuracy',
+                  value: fmtPct(cnn.accuracy),
+                  tone: 'cnn' as const,
+                  badge: 'Custom CNN',
+                },
+                {
+                  label: 'MobileNet accuracy',
+                  value: fmtPct(mnv.accuracy),
+                  tone: 'mnv2' as const,
+                  badge: 'MobileNetV2',
+                },
+                {
+                  label: 'Test images',
+                  value: perClassTakeaway?.testN ?? SPLIT_COUNTS.test,
+                  tone: 'accent' as const,
+                },
+                {
+                  label: 'Size advantage',
+                  value: `${fmtNum(mnv.model_size_mb, 1)} MB`,
+                  hint: `vs CNN ${fmtNum(cnn.model_size_mb, 1)} MB`,
+                  tone: 'default' as const,
+                },
+              ] as const
+            ).map((metric) => (
+              <CardSpotlight
+                key={metric.label}
+                radius={240}
+                color="#0f3d5c"
+                className="h-full min-w-0 rounded-[1.15rem] border border-[rgba(148,163,184,0.14)] bg-[rgba(18,28,49,0.9)] p-0 shadow-[0_12px_40px_rgba(0,0,0,0.22)]"
+              >
+                <MetricCard
+                  label={metric.label}
+                  value={metric.value}
+                  hint={'hint' in metric ? metric.hint : undefined}
+                  tone={metric.tone}
+                  badge={'badge' in metric ? metric.badge : undefined}
+                  className="relative z-20 h-full border-0 bg-transparent shadow-none ![background:transparent] ![box-shadow:none] ![backdrop-filter:none]"
+                />
+              </CardSpotlight>
+            ))}
           </div>
 
           <Card>

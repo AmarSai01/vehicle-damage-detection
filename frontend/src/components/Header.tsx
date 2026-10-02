@@ -44,6 +44,16 @@ export function Header() {
     }
   }, [open])
 
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)')
+    const onChange = () => {
+      if (mq.matches) setOpen(false)
+    }
+    onChange()
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
   return (
     <header className="sticky top-0 z-50 border-b border-[rgba(148,163,184,0.12)] bg-[rgba(7,11,20,0.82)] backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl min-w-0 items-center justify-between gap-3 px-4 py-3 sm:px-6">
@@ -88,10 +98,10 @@ export function Header() {
             ))}
           </nav>
 
-          {/* Menu button: always visible, far right */}
+          {/* Menu button: mobile / tablet only (desktop uses the primary nav) */}
           <button
             type="button"
-            className="inline-flex shrink-0 items-center justify-center rounded-[0.85rem] border border-[rgba(148,163,184,0.22)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[var(--color-ink)] transition hover:bg-[rgba(255,255,255,0.08)]"
+            className="inline-flex shrink-0 items-center justify-center rounded-[0.85rem] border border-[rgba(148,163,184,0.22)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-[var(--color-ink)] transition hover:bg-[rgba(255,255,255,0.08)] lg:hidden"
             aria-label={open ? 'Close navigation' : 'Open navigation'}
             aria-expanded={open}
             aria-controls="site-nav-menu"
@@ -103,7 +113,7 @@ export function Header() {
       </div>
 
       {open ? (
-        <div>
+        <div className="lg:hidden">
           <button
             type="button"
             aria-label="Close navigation overlay"

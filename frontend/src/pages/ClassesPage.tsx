@@ -51,7 +51,7 @@ export function ClassesPage() {
         subtitle='Six CarDD categories used by both models. There is no invented “no damage” class — CarDD does not provide one.'
       />
 
-      <Card className="text-sm leading-relaxed text-[var(--color-ink-muted)]">
+      <Card hover className="text-sm leading-relaxed text-[var(--color-ink-muted)]">
         <h2 className="font-display m-0 text-xl text-[var(--color-ink)]">Image-level labeling</h2>
         <p className="m-0 mt-2">{LABEL_STRATEGY_SUMMARY}</p>
         <p className="m-0 mt-2">
@@ -71,7 +71,7 @@ export function ClassesPage() {
             <Card key={id} hover className="group">
               <div className="flex items-start justify-between gap-3">
                 <Badge tone="accent">Class {i + 1}</Badge>
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(34,211,238,0.12)] text-cyan-300 transition group-hover:scale-105">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgba(34,211,238,0.12)] text-cyan-300 transition [@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-105 group-active:scale-105">
                   <Icon size={18} />
                 </span>
               </div>
