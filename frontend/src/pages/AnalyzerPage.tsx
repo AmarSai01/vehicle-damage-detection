@@ -254,7 +254,17 @@ export function AnalyzerPage() {
           </p>
         </Card>
 
-        <aside className="min-w-0 space-y-4 xl:sticky xl:top-24">
+        <aside className="relative min-w-0 space-y-4 rounded-[1.15rem] xl:sticky xl:top-24">
+          <GlowingEffect
+            glow
+            disabled={false}
+            spread={55}
+            proximity={80}
+            inactiveZone={0.15}
+            borderWidth={2}
+            movementDuration={1.5}
+            className="[filter:sepia(1)_saturate(2.8)_hue-rotate(165deg)] [&_.glow]:after:!opacity-[0.85]"
+          />
           <div>
             <p className="section-label">3 · Prediction</p>
             <h2 className="font-display m-0 mt-1 text-2xl text-[var(--color-ink)]">Result panel</h2>
