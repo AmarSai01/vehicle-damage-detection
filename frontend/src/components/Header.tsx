@@ -62,7 +62,7 @@ export function Header() {
         >
           <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 text-[#041018] shadow-[0_8px_24px_rgba(34,211,238,0.25)]">
             <img
-              src="/car-logo.png"
+              src="/assets/car-logo.png"
               alt=""
               className="h-full w-full scale-[1.4] object-contain object-center"
             />
