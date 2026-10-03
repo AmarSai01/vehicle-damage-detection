@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   BookOpen,
-  Car,
   ChartColumn,
   GitCompareArrows,
   Home,
@@ -11,7 +10,6 @@ import {
   ScanSearch,
   BarChart3,
   X,
-  Sparkles,
 } from 'lucide-react'
 
 const links = [
@@ -62,9 +60,12 @@ export function Header() {
           className="group flex min-w-0 items-center gap-3 no-underline"
           onClick={() => setOpen(false)}
         >
-          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 text-[#041018] shadow-[0_8px_24px_rgba(34,211,238,0.25)]">
-            <Car size={20} strokeWidth={2.2} />
-            <Sparkles size={10} className="absolute -right-1 -top-1 text-cyan-200" />
+          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 text-[#041018] shadow-[0_8px_24px_rgba(34,211,238,0.25)]">
+            <img
+              src="/car-logo.png"
+              alt=""
+              className="h-full w-full scale-[1.4] object-contain object-center"
+            />
           </span>
           <div className="min-w-0">
             <p className="font-display truncate text-base leading-none text-[var(--color-ink)] sm:text-lg md:text-xl">
