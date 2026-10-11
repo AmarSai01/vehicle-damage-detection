@@ -89,7 +89,9 @@ ml/artifacts/models/*.h5
 ml/artifacts/models/*.pb
 ml/artifacts/checkpoints/
 ml/artifacts/logs/
-ml/artifacts/history/
+ml/artifacts/history/*
+!ml/artifacts/history/custom_cnn_history.json
+!ml/artifacts/history/mobilenetv2_history.json
 ml/artifacts/evaluation/*.png
 ml/artifacts/evaluation/*.pdf
 ml/artifacts/splits/
