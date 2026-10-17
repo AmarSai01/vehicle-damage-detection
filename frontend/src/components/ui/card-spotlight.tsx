@@ -2,6 +2,8 @@
 
 import { useMotionValue, motion, useMotionTemplate } from "motion/react";
 import {
+  lazy,
+  Suspense,
   useEffect,
   useRef,
   useState,
@@ -10,7 +12,10 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from "react";
-import { CanvasRevealEffect } from "@/components/ui/canvas-reveal-effect";
+// three.js is ~500 KB; load it only once a card is actually hovered or tapped.
+const CanvasRevealEffect = lazy(() =>
+  import("@/components/ui/canvas-reveal-effect").then((m) => ({ default: m.CanvasRevealEffect }))
+);
 import { cn } from "@/lib/utils";
 
 const isFinePointer = () =>
@@ -128,17 +133,19 @@ export const CardSpotlight = ({
         }}
       >
         {showCanvas && (
-          <CanvasRevealEffect
-            animationSpeed={5}
-            containerClassName="bg-transparent absolute inset-0 pointer-events-none"
-            colors={[
-              [34, 211, 238],
-              [59, 130, 246],
-            ]}
-            opacities={[0.45, 0.45, 0.45, 0.65, 0.65, 0.65, 0.9, 0.9, 0.9, 1]}
-            dotSize={3}
-            showGradient={false}
-          />
+          <Suspense fallback={null}>
+            <CanvasRevealEffect
+              animationSpeed={5}
+              containerClassName="bg-transparent absolute inset-0 pointer-events-none"
+              colors={[
+                [34, 211, 238],
+                [59, 130, 246],
+              ]}
+              opacities={[0.45, 0.45, 0.45, 0.65, 0.65, 0.65, 0.9, 0.9, 0.9, 1]}
+              dotSize={3}
+              showGradient={false}
+            />
+          </Suspense>
         )}
       </motion.div>
       {children}
