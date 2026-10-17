@@ -13,6 +13,7 @@ import { ApiError, checkHealth, predictImage } from '../api/client'
 import { ImageUpload } from '../components/ImageUpload'
 import { PageHeader } from '../components/PageHeader'
 import { PredictionCard } from '../components/PredictionCard'
+import { SamplePicker } from '../components/SamplePicker'
 import { StatusBanner } from '../components/StatusBanner'
 import { UiState } from '../components/UiState'
 import { Badge } from '../components/ui/Badge'
@@ -22,9 +23,9 @@ import { GlowingEffect } from '../components/ui/glowing-effect'
 import type { ModelPrediction, ModelStatus, PredictModelSelection } from '../types'
 
 const MODEL_OPTIONS: { id: PredictModelSelection; label: string; hint: string }[] = [
-  { id: 'custom_cnn', label: 'Custom CNN', hint: 'From-scratch architecture' },
-  { id: 'mobilenetv2', label: 'MobileNetV2', hint: 'ImageNet transfer learning' },
-  { id: 'both', label: 'Compare both', hint: 'Side-by-side real inference' },
+  { id: 'custom_cnn', label: 'Custom CNN', hint: 'Built and trained from scratch' },
+  { id: 'mobilenetv2', label: 'MobileNetV2', hint: 'Pretrained, then fine-tuned' },
+  { id: 'both', label: 'Compare both', hint: 'Run both side by side' },
 ]
 
 const tooltipStyle = {
@@ -155,7 +156,7 @@ export function AnalyzerPage() {
       <PageHeader
         kicker="Interactive workspace"
         title="Damage Analyzer"
-        subtitle="Upload a vehicle image, choose a trained model (or compare both), and run real inference from the `.keras` artifacts — not placeholders."
+        subtitle="Upload a photo of a damaged car (or pick a sample), choose a model — or compare both — and get a live prediction of the damage type."
       />
 
       <StatusBanner apiOk={apiOk} models={modelStatus} message={apiMessage} />
@@ -178,6 +179,7 @@ export function AnalyzerPage() {
             disabled={loading}
             analyzing={loading}
           />
+          <SamplePicker onPick={onFileChange} disabled={loading} />
 
           <fieldset className="min-w-0 rounded-xl border border-[rgba(148,163,184,0.16)] bg-[rgba(7,11,20,0.4)] p-4">
             <legend className="px-1 text-sm font-semibold text-[var(--color-ink)]">
@@ -299,8 +301,8 @@ export function AnalyzerPage() {
                 )}
                 {!loading && !prediction && (
                   <p className="mt-4 text-sm text-[var(--color-ink-muted)]">
-                    Upload an image and click Analyze to see the predicted damage class, confidence,
-                    probability distribution, and inference time.
+                    Upload a photo or pick a sample, then click Analyze to see the damage type, how
+                    confident the model is, and how long it took.
                   </p>
                 )}
                 {!loading && prediction && !prediction.available && (
@@ -373,10 +375,10 @@ export function AnalyzerPage() {
       <details className="card card-pad text-sm text-[var(--color-ink-muted)]">
         <summary className="cursor-pointer font-semibold text-[var(--color-ink)]">Demo tips</summary>
         <ul className="mt-3 list-disc space-y-1.5 pl-5">
-          <li>Use your own authorized vehicle photos (this app does not ship CarDD sample images).</li>
+          <li>No photo handy? Pick one of the sample images above, or use any clear photo of a damaged car.</li>
           <li>
-            For a viva, try <strong className="text-[var(--color-ink)]">Compare both</strong> on the
-            same image, then open Results / Visualizations for held-out test metrics.
+            Try <strong className="text-[var(--color-ink)]">Compare both</strong> on the same image,
+            then open Results to see how each model scores across the whole test set.
           </li>
           <li>
             Confidence and latency are for <em>this upload only</em> — they are not the project’s

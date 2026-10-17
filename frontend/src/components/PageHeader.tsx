@@ -8,9 +8,9 @@ interface Props {
   className?: string
 }
 
-export function PageHeader({ title, subtitle, kicker = 'Vehicle Damage Detection', className = '' }: Props) {
+export function PageHeader({ title, subtitle, kicker = 'Vehiorax', className = '' }: Props) {
   return (
-    <header className={`page-header animate-fade-up ${className}`.trim()}>
+    <header className={`page-header animate-rise-in ${className}`.trim()}>
       {kicker ? <p className="page-kicker">{kicker}</p> : null}
       <h1 className="page-title">{title}</h1>
       {subtitle ? <div className="page-subtitle">{subtitle}</div> : null}

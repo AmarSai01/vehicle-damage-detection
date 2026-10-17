@@ -57,22 +57,23 @@ export function Header() {
       <div className="mx-auto flex max-w-6xl min-w-0 items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <NavLink
           to="/"
+          aria-label="Vehiorax home"
           className="group flex min-w-0 items-center gap-3 no-underline"
           onClick={() => setOpen(false)}
         >
           <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500 text-[#041018] shadow-[0_8px_24px_rgba(34,211,238,0.25)]">
             <img
               src="/assets/car-logo.png"
-              alt=""
+              alt="Vehiorax logo"
               className="h-full w-full scale-[1.4] object-contain object-center"
             />
           </span>
           <div className="min-w-0">
-            <p className="font-display truncate text-base leading-none text-[var(--color-ink)] sm:text-lg md:text-xl">
-              Vehicle Damage Detection
+            <p className="font-display truncate text-lg leading-none text-[var(--color-ink)] sm:text-xl">
+              Vehiorax
             </p>
-            <p className="mt-1 hidden truncate text-[11px] tracking-wide text-[var(--color-ink-muted)] sm:block">
-              AI Automotive · Custom CNN · MobileNetV2
+            <p className="mt-1 truncate text-[11px] tracking-wide text-[var(--color-ink-muted)]">
+              AI vehicle damage detection
             </p>
           </div>
         </NavLink>

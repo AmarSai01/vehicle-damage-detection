@@ -25,8 +25,8 @@ export default function App() {
           </Routes>
         </main>
         <footer className="mx-auto w-full max-w-6xl border-t border-[rgba(148,163,184,0.12)] px-4 py-8 text-center text-xs leading-relaxed text-[var(--color-ink-muted)] sm:px-6">
-          Vehicle Damage Detection &amp; Classification · Academic AI demonstration · Real Keras
-          inference · No fabricated predictions
+          Vehiorax · AI vehicle damage detection · Two deep-learning models trained on the CarDD
+          research dataset · Real predictions, never faked
         </footer>
       </div>
     </BrowserRouter>

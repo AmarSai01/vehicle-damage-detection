@@ -78,17 +78,18 @@ export function HomePage() {
 
         <div className="relative z-10 max-w-3xl">
           <Badge tone="accent">
-            <Sparkles size={12} /> Academic AI System · CarDD
+            <Sparkles size={12} /> Vehiorax · Computer vision project
           </Badge>
-          <h1 className="font-display animate-fade-up mt-5 text-4xl leading-[1.05] text-[var(--color-ink)] sm:text-5xl md:text-6xl">
-            AI-Powered Vehicle Damage Detection
+          <h1 className="font-display animate-rise-in mt-5 text-4xl leading-[1.05] text-[var(--color-ink)] sm:text-5xl md:text-6xl">
+            Spot car damage from a single photo
           </h1>
-          <p className="animate-fade-up-delay mt-5 max-w-2xl text-base text-[var(--color-ink-muted)] sm:text-lg">
-            Classify exterior car damage from a single photo with two real TensorFlow models — a
-            Custom CNN trained from scratch and MobileNetV2 with ImageNet transfer learning —
-            evaluated fairly on the same authorized CarDD split.
+          <p className="animate-rise-in mt-5 max-w-2xl text-base text-[var(--color-ink-muted)] sm:text-lg">
+            Upload a picture of a car and Vehiorax tells you what kind of damage it sees — dent,
+            scratch, crack, shattered glass, broken lamp or flat tire. Two deep-learning models,
+            one built from scratch and one adapted from a pretrained network, are tested on the same
+            4,000-image research dataset so you can compare them side by side.
           </p>
-          <div className="animate-fade-up-delay mt-8 flex flex-wrap gap-3">
+          <div className="animate-rise-in mt-8 flex flex-wrap gap-3">
             <Button to="/analyze" variant="primary">
               Analyze Vehicle
               <ArrowRight size={18} />
@@ -121,7 +122,7 @@ export function HomePage() {
         </div>
         {!metricsReady && (
           <p className="relative z-10 m-0 mt-3 text-xs text-[var(--color-warn)]">
-            Start the backend to load live evaluation metrics on this page.
+            Live test scores are unavailable right now — the model server may be waking up.
           </p>
         )}
       </section>
@@ -134,8 +135,8 @@ export function HomePage() {
                 <Badge tone="cnn">Baseline</Badge>
                 <h2 className="font-display m-0 mt-3 text-2xl text-[var(--color-ink)]">Custom CNN</h2>
                 <p className="m-0 mt-2 text-sm text-[var(--color-ink-muted)]">
-                  Scratch TensorFlow/Keras architecture with progressive conv blocks (32→256), trained
-                  without ImageNet weights — the academic from-scratch baseline.
+                  A convolutional network designed and trained from scratch, with no pretrained
+                  knowledge — the baseline that shows what the data alone can teach.
                 </p>
                 <div className="mt-4 flex items-center gap-2 text-cyan-200/90">
                   <Cpu size={16} />
@@ -152,8 +153,8 @@ export function HomePage() {
                 <Badge tone="mnv2">Transfer learning</Badge>
                 <h2 className="font-display m-0 mt-3 text-2xl text-[var(--color-ink)]">MobileNetV2</h2>
                 <p className="m-0 mt-2 text-sm text-[var(--color-ink-muted)]">
-                  ImageNet-pretrained backbone with a custom 6-class head, freeze-then-fine-tune training —
-                  stronger features with a much smaller artifact in this experiment.
+                  A compact network pretrained on millions of everyday photos, then fine-tuned to
+                  recognise the six damage types — more accurate here, and a much smaller model file.
                 </p>
                 <div className="mt-4 flex items-center gap-2 text-teal-200/90">
                   <BrainCircuit size={16} />
@@ -168,16 +169,16 @@ export function HomePage() {
       <section className="mt-10">
         <div className="mb-4 flex items-end justify-between gap-3">
           <div>
-            <p className="section-label mb-2">Demo path</p>
-            <h2 className="font-display m-0 text-2xl text-[var(--color-ink)]">Walk the platform</h2>
+            <p className="section-label mb-2">Take the tour</p>
+            <h2 className="font-display m-0 text-2xl text-[var(--color-ink)]">Explore the project</h2>
           </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { to: '/analyze', label: '1. Analyzer', icon: ScanSearch, hint: 'Live inference' },
-            { to: '/results', label: '2. Results', icon: Gauge, hint: 'Test-set metrics' },
-            { to: '/visualizations', label: '3. Visualizations', icon: ChartColumn, hint: 'Matrices & curves' },
-            { to: '/about', label: '4. About', icon: BookOpen, hint: 'Method & limits' },
+            { to: '/analyze', label: '1. Analyzer', icon: ScanSearch, hint: 'Try it on a photo' },
+            { to: '/results', label: '2. Results', icon: Gauge, hint: 'How accurate it is' },
+            { to: '/visualizations', label: '3. Visualizations', icon: ChartColumn, hint: 'Charts & mistakes' },
+            { to: '/about', label: '4. About', icon: BookOpen, hint: 'How it was built' },
           ].map(({ to, label, icon: Icon, hint }) => (
             <Button
               key={to}
@@ -201,7 +202,7 @@ export function HomePage() {
         <Card hover>
           <div className="flex items-center gap-2">
             <Layers size={18} className="text-[var(--color-accent)]" />
-            <h2 className="font-display m-0 text-xl text-[var(--color-ink)]">Six CarDD classes</h2>
+            <h2 className="font-display m-0 text-xl text-[var(--color-ink)]">Six damage types</h2>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
             {CLASS_LIST.map((name) => (
@@ -211,8 +212,8 @@ export function HomePage() {
             ))}
           </div>
           <p className="m-0 mt-4 text-sm text-[var(--color-ink-muted)]">
-            No invented “no damage” class — CarDD does not provide one. Support counts and labeling
-            details are on the Classes page.
+            The research dataset (CarDD) only contains damaged cars, so there is no “no damage”
+            option — the models always pick the closest damage type. Details are on the Classes page.
           </p>
         </Card>
         <Card hover>
@@ -230,17 +231,17 @@ export function HomePage() {
           {
             icon: Cpu,
             title: 'Two real models',
-            body: 'Custom CNN and MobileNetV2 — both trained on CarDD, no dummy outputs.',
+            body: 'Both models are trained on real damage photos and run live — no canned answers.',
           },
           {
             icon: Gauge,
             title: 'Measured metrics',
-            body: 'Accuracy, precision, recall, F1, latency, and size from evaluation artifacts.',
+            body: 'Accuracy, precision, recall, F1, speed and model size — all measured on held-out test photos.',
           },
           {
             icon: ShieldCheck,
-            title: 'Honest AI UX',
-            body: 'Missing models and API errors are shown clearly — never fabricated predictions.',
+            title: 'Honest about limits',
+            body: 'If a model is offline or unsure, the app says so instead of guessing.',
           },
         ].map(({ icon: Icon, title, body }) => (
           <Card key={title} hover>

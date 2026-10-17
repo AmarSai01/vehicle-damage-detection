@@ -46,7 +46,7 @@ export function StatusBanner({ apiOk, models, message }: Props) {
           <p className="m-0 font-semibold">Model unavailable</p>
           <p className="m-0 mt-0.5 break-words">
             {missing.map(([name]) => name).join(', ')} not trained yet. The API will not invent
-            predictions — train models after obtaining the authorized CarDD dataset.
+            predictions — train the models on the CarDD dataset first.
           </p>
         </div>
       </div>
@@ -58,7 +58,7 @@ export function StatusBanner({ apiOk, models, message }: Props) {
       <CheckCircle2 size={18} className="mt-0.5 shrink-0" />
       <div>
         <p className="m-0 font-semibold">API ready</p>
-        <p className="m-0 mt-0.5">Both model artifacts are available for inference.</p>
+        <p className="m-0 mt-0.5">Both models are loaded and ready to analyze photos.</p>
       </div>
     </div>
   )

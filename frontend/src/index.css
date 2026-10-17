@@ -389,8 +389,19 @@ a {
   animation: fade-up 0.55s ease-out both;
 }
 
-.animate-fade-up-delay {
-  animation: fade-up 0.65s ease-out 0.1s both;
+/* Above-the-fold text: motion only, never invisible — a busy phone main thread
+   would otherwise leave headlines faint and CTAs missing until the fade finishes. */
+@keyframes rise-in {
+  from {
+    transform: translateY(6px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-rise-in {
+  animation: rise-in 0.3s ease-out both;
 }
 
 .animate-pulse-soft {
