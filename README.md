@@ -1,292 +1,201 @@
-# Vehicle Damage Detection & Classification
+<div align="center">
 
-Academic full-stack system for **vehicle damage classification** using exactly two deep-learning models on the **CarDD** dataset:
+<a href="https://vehiorax.amarsai.org"><img src="docs/readme/banner.png" alt="Vehiorax: vehicle damage classification with a Custom CNN and MobileNetV2" width="100%"></a>
 
-1. **Custom CNN** — TensorFlow/Keras architecture built from scratch (no pretrained backbone)
-2. **MobileNetV2** — ImageNet transfer learning (freeze head → fine-tune)
+<br>
 
-> **No fake ML results.** Predictions, confidences, and metrics come only from real trained artifacts. If models are missing, the API returns a clear *model not available* response.
+[![Live site](https://img.shields.io/badge/live-vehiorax.amarsai.org-2de2e6?style=for-the-badge&labelColor=08090a)](https://vehiorax.amarsai.org)
+[![MobileNetV2 accuracy](https://img.shields.io/badge/MobileNetV2_test_accuracy-72.73%25-ff5a4e?style=for-the-badge&labelColor=08090a)](#-results)
+
+![Python](https://img.shields.io/badge/Python-3.12-08090a?logo=python&logoColor=2de2e6)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-Keras-08090a?logo=tensorflow&logoColor=2de2e6)
+![FastAPI](https://img.shields.io/badge/FastAPI-08090a?logo=fastapi&logoColor=2de2e6)
+![React](https://img.shields.io/badge/React_19-08090a?logo=react&logoColor=2de2e6)
+![TypeScript](https://img.shields.io/badge/TypeScript-08090a?logo=typescript&logoColor=2de2e6)
+![Vite](https://img.shields.io/badge/Vite-08090a?logo=vite&logoColor=2de2e6)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-08090a?logo=tailwindcss&logoColor=2de2e6)
+![Vercel](https://img.shields.io/badge/Vercel-08090a?logo=vercel&logoColor=2de2e6)
+
+**Upload a photo of a damaged car and get the damage type in about a second.**<br>
+Two deep-learning models, trained on the same dataset and tested on the same 374 held-out images, compared side by side.
+
+[**Try it live →**](https://vehiorax.amarsai.org) &nbsp;·&nbsp; [Results](#-results) &nbsp;·&nbsp; [How it works](#-ml-pipeline) &nbsp;·&nbsp; [Run locally](#-run-locally)
+
+</div>
 
 ---
 
-## 1. Project overview
+## 💡 Why
 
-Users upload a vehicle image, select **Custom CNN** or **MobileNetV2**, and receive a real predicted damage class with confidence, full six-class probabilities, and inference time. Comparison and Results pages load metrics from `ml/artifacts/evaluation/comparison.json`.
+Insurance triage and garage estimates start with one question: *what kind of damage is this?* Public car-damage data is scarce. The **CarDD** research dataset (IEEE T-ITS 2023) gives six clean damage classes, which makes it a good way to answer a second question:
 
-## 2. Problem statement
+> **Is a small pretrained network better than a bigger network trained from scratch?**
 
-Automatic recognition of external car damage types supports insurance triage and academic study of vision models on fine-grained damage categories. Public high-quality data is limited; CarDD provides six well-defined damage classes.
+Vehiorax trains both on identical splits, reports every metric honestly (including the weak classes), and serves both models live. Every number in the UI and in this README comes from the evaluation files in `ml/artifacts/evaluation/`. Nothing is made up.
 
-## 3. Objectives
+## ✨ Features
 
-- Build a reproducible ML pipeline (inspect → prepare → train → evaluate)
-- Compare a scratch CNN vs MobileNetV2 fairly on the same split
-- Expose dual-model inference via FastAPI
-- Present results in a professional React UI suitable for viva / AAT demo
+| | |
+|---|---|
+| 🔍 **Damage Analyzer** | Drag in a photo or pick a sample. Run the Custom CNN, MobileNetV2, or **both side by side**. You get the predicted class, the confidence, all six class probabilities, and the inference time. |
+| ⚖️ **Model Comparison** | Accuracy, macro precision, recall and F1, inference time, model size and parameter count, read from `comparison.json`. |
+| 📈 **Visualizations** | Training curves, per-class F1 and confusion matrices for both models. |
+| 🗂️ **Damage classes** | Dent · Scratch · Crack · Glass shatter · Lamp broken · Tire flat (the six official CarDD categories, with no invented "no damage" class). |
+| 🛡️ **Honest failure states** | If a model file is missing the API answers `503 model not available` instead of guessing. Bad uploads get clear `413` / `415` / `400` errors. |
+| ⚡ **Fast cold path** | Models load lazily once per process. Pages and three.js are code-split so the first load stays small. |
 
-## 4. Dataset
+## 📸 Screenshots
 
-**CarDD** — Car Damage Detection Dataset (Wang, Li & Wu, 2023)
+<table>
+<tr>
+<td width="50%"><img src="docs/readme/screenshots/home.jpg" alt="Vehiorax home page with headline accuracy figures"><br><sub><b>Home</b>: the headline figures from the evaluation run</sub></td>
+<td width="50%"><img src="docs/readme/screenshots/analyzer.jpg" alt="Damage Analyzer comparing both models on a glass-shatter photo"><br><sub><b>Analyzer</b>: both models classify a sample as glass shatter</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/readme/screenshots/comparison.jpg" alt="Model comparison page with side-by-side metrics table"><br><sub><b>Comparison</b>: side-by-side metrics on the 374-image test split</sub></td>
+<td width="50%"><img src="docs/readme/screenshots/charts.jpg" alt="Bar charts of classification metrics and mean inference time"><br><sub><b>Charts</b>: classification metrics and mean inference time</sub></td>
+</tr>
+</table>
 
-| Class ID | Display name |
-|----------|--------------|
-| `dent` | Dent |
-| `scratch` | Scratch |
-| `crack` | Crack |
-| `glass_shatter` | Glass Shatter |
-| `lamp_broken` | Lamp Broken |
-| `tire_flat` | Tire Flat |
-
-There is **no** invented “no damage” class — CarDD does not provide a genuine undamaged class.
-
-## 5. Dataset licensing note
-
-CarDD requires **prior consent** from the PIC Lab. Commercial use and redistribution are restricted.
-
-- Official site: https://cardd-ustc.github.io/
-- License PDF: https://cardd-ustc.github.io/docs/CarDD_license.pdf
-
-**This repository does not include CarDD.** Do not commit the dataset to Git.
-
-### Manual action required to obtain CarDD
-
-1. Open https://cardd-ustc.github.io/
-2. Review the license terms
-3. Complete the consent/license form and email the PIC Lab contact listed on the site (historically: wangxk0624@mail.ustc.edu.cn)
-4. Download the authorized archive after approval
-5. Extract it locally
-6. Copy `.env.example` → `.env` and set:
-
-```env
-DATASET_ROOT=./data/CarDD
-```
-
-(or any path to your extracted folder — avoid hardcoding usernames in shared configs)
-
-7. Run `python scripts/inspect_dataset.py`
-
-## 6. Technology stack
-
-| Layer | Stack |
-|-------|--------|
-| Frontend | React, Vite, TypeScript, Tailwind CSS |
-| Backend | FastAPI, Uvicorn, Pydantic |
-| ML | TensorFlow/Keras, scikit-learn, Pillow |
-| Viz | Matplotlib, Seaborn |
-| Tests | Pytest, Vitest |
-
-## 7. Project architecture
+## 🏗️ Architecture
 
 ```mermaid
 flowchart LR
-  U[User Browser] --> FE[React Frontend]
-  FE -->|POST /api/predict| API[FastAPI]
-  API --> P[DamagePredictor]
-  P --> CNN[Custom CNN .keras]
-  P --> MNV[MobileNetV2 .keras]
-  CNN --> API
-  MNV --> API
-  API --> FE
+    U([User's browser]) --> FE["React 19 + Vite SPA<br/><sub>Vercel service: frontend</sub>"]
+    FE -- "/api/* rewrite" --> API["FastAPI<br/><sub>Vercel service: backend</sub>"]
+    API --> P["DamagePredictor<br/><sub>singleton, lazy-loads once</sub>"]
+    P --> CNN[("custom_cnn.keras<br/>26.9M params")]
+    P --> MNV[("mobilenetv2.keras<br/>2.6M params")]
+    API --> EV[("comparison.json<br/>training history")]
+    HF[("Hugging Face<br/>model repo")] -. "build step:<br/>download_models.py" .-> CNN
+    HF -.-> MNV
+
+    classDef ui fill:#08090a,stroke:#2de2e6,color:#f2f5f4
+    classDef svc fill:#11181a,stroke:#2de2e6,color:#f2f5f4
+    classDef store fill:#1a1110,stroke:#ff5a4e,color:#f2f5f4
+    class U,FE ui
+    class API,P svc
+    class CNN,MNV,EV,HF store
 ```
+
+One Vercel project runs two services. The SPA serves every route, and `/api/*` is rewritten to the FastAPI service. Model weights are too big for Git, so the backend build downloads them from Hugging Face.
+
+## 🧠 ML pipeline
 
 ```mermaid
-flowchart TB
-  DS[CarDD authorized local copy] --> INS[inspect_dataset.py]
-  INS --> PREP[prepare_dataset.py stratified split]
-  PREP --> T1[train_custom_cnn.py]
-  PREP --> T2[train_mobilenetv2.py]
-  T1 --> EV[evaluate_models.py]
-  T2 --> EV
-  EV --> ART[artifacts/evaluation]
-  ART --> API[FastAPI /api/models]
+flowchart LR
+    A["CarDD (COCO)<br/>4,000 images"] --> B["One label per image<br/><sub>largest total damage area</sub>"]
+    B --> C["Official splits<br/>2,816 / 810 / 374"]
+    C --> D["Resize 224×224<br/><sub>CNN: scale to 0–1<br/>MobileNetV2: preprocess_input</sub>"]
+    D --> E1["Custom CNN<br/><sub>4 conv blocks, from scratch</sub>"]
+    D --> E2["MobileNetV2<br/><sub>ImageNet: 15 ep head,<br/>35 ep fine-tune</sub>"]
+    E1 --> F["evaluate_models.py<br/><sub>same test split, same metrics</sub>"]
+    E2 --> F
+    F --> G["FastAPI<br/>POST /api/predict"]
+    G --> H["React UI"]
+
+    classDef data fill:#08090a,stroke:#7d8a8c,color:#f2f5f4
+    classDef model fill:#1a1110,stroke:#ff5a4e,color:#f2f5f4
+    classDef serve fill:#08090a,stroke:#2de2e6,color:#f2f5f4
+    class A,B,C,D data
+    class E1,E2,F model
+    class G,H serve
 ```
 
-## 8. Custom CNN architecture
+- **Labels:** CarDD images can show several damages. Each image gets the class with the largest total mask area, and the official train/val/test partitions are kept as they are.
+- **Custom CNN:** 4 × (Conv-BN-ReLU ×2 → MaxPool → Dropout) with 32→64→128→256 filters, then Dense 512 → Softmax 6. Random initialisation.
+- **MobileNetV2:** ImageNet backbone → GAP → Dense 256 → Softmax 6. The head is trained first with the base frozen, then the layers from 100 up are fine-tuned at a learning rate of 1e-4.
+- **Training:** batch 32, Adam at 1e-3, early stopping (patience 10), ReduceLROnPlateau, best-checkpoint on validation accuracy, fixed seed 42.
 
-Documented in `ml/models/custom_cnn.py`:
+## 📊 Results
 
-- 4 conv blocks (32→64→128→256), each: Conv-BN-ReLU ×2 → MaxPool → Dropout
-- Head: Flatten → Dense(512)-BN-ReLU-Dropout → Softmax(6)
-- Trained from random initialization (no pretrained backbone)
+Held-out CarDD test split: **374 images**, the same for both models.
 
-## 9. MobileNetV2 architecture
+| Metric | Custom CNN | **MobileNetV2** |
+|---|---:|---:|
+| Accuracy | 59.89% | **72.73%** |
+| Precision (macro) | 53.85% | **82.48%** |
+| Recall (macro) | 50.70% | **64.03%** |
+| F1 (macro) | 51.60% | **66.65%** |
+| Mean inference time | 15.56 ms | **13.52 ms** |
+| Model size | 307.6 MB | **27.2 MB** |
+| Parameters | 26,870,374 | **2,587,462** |
 
-Documented in `ml/models/mobilenetv2.py`:
+<details>
+<summary><b>Per-class F1 (MobileNetV2 vs Custom CNN)</b></summary>
 
-- `MobileNetV2(weights="imagenet", include_top=False)`
-- Head: GAP → Dropout → Dense(256) → Dropout → Softmax(6)
-- Phase 1: freeze base, train head
-- Phase 2: unfreeze upper layers (`fine_tune_at`), lower LR
+| Class | Test images | MobileNetV2 F1 | Custom CNN F1 |
+|---|---:|---:|---:|
+| Tire flat | 28 | 0.926 | 0.784 |
+| Glass shatter | 65 | 0.915 | 0.806 |
+| Scratch | 122 | 0.693 | 0.604 |
+| Dent | 109 | 0.685 | 0.508 |
+| Lamp broken | 42 | 0.559 | 0.394 |
+| Crack | 8 | 0.222 | 0.000 |
 
-## 10. Data preprocessing
+</details>
 
-- Image validation (format, readability, size limits)
-- Resize to configurable `IMAGE_SIZE` (default 224)
-- Custom CNN: scale to `[0, 1]`
-- MobileNetV2: `mobilenet_v2.preprocess_input`
-- Stratified train/val/test split with leakage checks
-- Adapter layer auto-detects classification folders / COCO / CSV layouts **without modifying** original files
+**Takeaway:** in this experiment the pretrained MobileNetV2 is more accurate, a little faster, and about **11× smaller**. Crack is the weak spot for both models. It has only 94 images in the whole dataset and 8 in the test split, which is why the macro scores sit below accuracy.
 
-## 11. Training process
+## 🧰 Tech stack
 
-Reproducible seeds, early stopping, ReduceLROnPlateau, best-model checkpointing, history JSON/CSV.
+| Layer | Tools |
+|---|---|
+| **ML** | TensorFlow / Keras, scikit-learn, NumPy, Pillow, Matplotlib, Seaborn |
+| **API** | FastAPI, Uvicorn, Pydantic Settings, python-multipart |
+| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS 4, Motion, Recharts, three.js (react-three-fiber), react-dropzone |
+| **Testing** | Pytest, Vitest |
+| **Hosting** | Vercel (frontend and backend services in one project), Hugging Face (model weights) |
 
-Artifacts:
+## 🗂️ Project structure
 
-- `ml/artifacts/models/custom_cnn.keras`
-- `ml/artifacts/models/mobilenetv2.keras`
-
-## 12. Evaluation methodology
-
-Same test split for both models. Metrics: accuracy, macro/weighted precision/recall/F1, per-class scores, confusion matrices, inference time, parameter count, file size. Figures saved under `ml/artifacts/evaluation/`.
-
-## 13. API documentation
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/health` | Liveness + model availability (no filesystem paths) |
-| GET | `/api/models` | Model status, class list, comparison payload |
-| GET | `/api/comparison` | Evaluation metrics from `comparison.json` |
-| POST | `/api/predict` | Multipart `file` + form `model` (`custom_cnn` \| `mobilenetv2` \| `both`) |
-
-Interactive docs: `http://127.0.0.1:8000/docs`
-
-Models are lazy-loaded once into a process singleton (`DamagePredictor`) — not reloaded per request.
-
-Example single-model response:
-
-```json
-{
-  "selected_model": "mobilenetv2",
-  "classes": ["Dent", "Scratch", "Crack", "Glass Shatter", "Lamp Broken", "Tire Flat"],
-  "prediction": {
-    "model_name": "mobilenetv2",
-    "class": "Dent",
-    "confidence": 0.91,
-    "inference_time_ms": 13.5,
-    "available": true,
-    "probabilities": {
-      "Dent": 0.91,
-      "Scratch": 0.04,
-      "Crack": 0.01,
-      "Glass Shatter": 0.01,
-      "Lamp Broken": 0.02,
-      "Tire Flat": 0.01
-    }
-  },
-  "mobilenetv2": { "...": "same object as prediction" }
-}
+```text
+├── backend/app/            FastAPI app: routes, schemas, prediction + visualization services
+├── ml/
+│   ├── models/             custom_cnn.py, mobilenetv2.py
+│   ├── preprocessing/      dataset loader, preprocessing, split builder
+│   ├── training/           train_custom_cnn.py, train_mobilenetv2.py
+│   ├── evaluation/         evaluate_models.py, metrics, plots
+│   ├── inference/          DamagePredictor
+│   └── artifacts/          evaluation JSON, training history (weights are git-ignored)
+├── frontend/src/           React pages, components, API client
+├── scripts/                inspect / prepare dataset, download_models.py, run_ml.py
+├── configs/default.yaml    classes, image size, training and fine-tune settings
+├── tests/                  backend, ml and frontend tests
+└── vercel.json             two-service deploy (frontend + backend)
 ```
 
-Missing selected model → HTTP **503**. Unsupported format → **415**. Oversized → **413**. Corrupt image → **400**.
+## 🚀 Run locally
 
-## 14. Frontend architecture
+You need Python 3.10–3.12 (TensorFlow) and Node.js 18+. You **don't** need the dataset to run the app: the trained weights are downloaded for you.
 
-| Route | Page |
-|-------|------|
-| `/` | Home — project intro + CTA |
-| `/analyze` | Damage Analyzer — upload, model selector, live prediction |
-| `/compare` | Model Comparison — table + charts from evaluation JSON |
-| `/classes` | Six CarDD damage class cards |
-| `/results` | Factual CNN vs MobileNetV2 result write-up |
-| `/about` | Problem, methodology, stack, citation, disclaimer |
+```bash
+git clone https://github.com/AmarSai01/vehicle-damage-detection.git
+cd vehicle-damage-detection
 
-API client: `frontend/src/api/client.ts`. UI states cover loading, empty, API down, and model unavailable.
-
-## 15. Installation (Windows 11)
-
-### Prerequisites
-
-- **Python 3.10–3.12 strongly recommended** (TensorFlow). Python **3.13** may work with newer TF wheels (`>=2.20`). Python **3.14** is not a reliable target for TensorFlow — use 3.12 if you see install failures.
-- Node.js 18+
-- Git
-
-Full Windows notes: [`docs/SETUP_WINDOWS.md`](docs/SETUP_WINDOWS.md).
-
-### Clone / open project
-
-```powershell
-cd "C:\path\to\Vehicle damage Detection"
-copy .env.example .env
-```
-
-### Python virtual environment
-
-```powershell
-# Prefer an explicit 3.12 runtime when available:
-py -3.12 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip certifi
+# 1. Backend
+python -m venv .venv
+.venv\Scripts\activate          # macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
+python scripts/download_models.py
+uvicorn backend.app.main:app --reload --port 8000
 ```
 
-If `pip install -r requirements.txt` fails on TensorFlow only, install core deps first, then try `pip install "tensorflow>=2.20"` (see `docs/SETUP_WINDOWS.md`).
-
-### Frontend
-
-```powershell
+```bash
+# 2. Frontend (second terminal)
 cd frontend
 npm install
-npm install -D vitest
-copy .env.example .env
-cd ..
+npm run dev                      # http://127.0.0.1:5173 (proxies /api to :8000)
 ```
 
-## 16. Running locally
+API docs: `http://127.0.0.1:8000/docs`. The main endpoints are `GET /api/health`, `GET /api/models`, `GET /api/comparison` and `POST /api/predict` (multipart `file` plus `model` = `custom_cnn` | `mobilenetv2` | `both`).
 
-**Terminal 1 — Backend** (from project root):
+<details>
+<summary><b>Retrain from scratch</b></summary>
 
-```powershell
-.\.venv\Scripts\Activate.ps1
-uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000
-```
+CarDD is licence-restricted and is **not** in this repo. Request access from the [PIC Lab](https://cardd-ustc.github.io/), extract it, and point `DATASET_ROOT` at it in `.env` (copy `.env.example`). Then:
 
-**Terminal 2 — Frontend:**
-
-```powershell
-cd frontend
-npm run dev
-```
-
-Open http://127.0.0.1:5173
-
-### Website usage
-
-1. Home → **Analyze Vehicle**
-2. Drag/drop an image, choose Custom CNN or MobileNetV2, click **Analyze**
-3. Review predicted class, confidence, probability chart, inference time
-4. Open **Comparison** / **Results** for evaluation metrics from `comparison.json`
-5. Browse **Classes** for CarDD category definitions
-
-### Model artifact locations
-
-- `ml/artifacts/models/custom_cnn.keras`
-- `ml/artifacts/models/mobilenetv2.keras`
-- `ml/artifacts/evaluation/comparison.json`
-- `ml/artifacts/history/*_history.json`
-
-## 17. Training instructions
-
-Do **not** train until authorized CarDD data is available.
-
-```powershell
-# Inspect (fails clearly if dataset missing)
-python scripts/inspect_dataset.py
-
-# Build stratified split indexes (does not modify CarDD files)
-python scripts/prepare_dataset.py
-
-# Train models
-python -m ml.training.train_custom_cnn --epochs 50
-python -m ml.training.train_mobilenetv2
-
-# Evaluate + write comparison.json + figures
-python -m ml.evaluation.evaluate_models
-```
-
-Optional helper:
-
-```powershell
+```bash
 python scripts/run_ml.py inspect
 python scripts/run_ml.py prepare
 python scripts/run_ml.py train-cnn
@@ -294,59 +203,20 @@ python scripts/run_ml.py train-mobilenet
 python scripts/run_ml.py evaluate
 ```
 
-GPU is used automatically if TensorFlow detects one; otherwise CPU.
+Tests: `pytest -q` (backend + ML) and `cd frontend && npm test`.
+The full developer notes (API contract, Windows setup, limitations) are in [`docs/DEVELOPER_GUIDE.md`](docs/DEVELOPER_GUIDE.md).
 
-## 18. Testing
+</details>
 
-```powershell
-# Backend + ML (venv active, from project root)
-pytest -q
+## 📚 Dataset credit
 
-# Frontend logic tests
-cd frontend
-npm install -D vitest
-npx vitest run ../tests/frontend
-```
+CarDD: Wang, Li & Wu, *"CarDD: A New Dataset for Vision-Based Car Damage Detection"*, IEEE Transactions on Intelligent Transportation Systems 24(7), 2023. [doi:10.1109/TITS.2023.3258480](https://doi.org/10.1109/TITS.2023.3258480). The dataset is used under the PIC Lab's academic licence and is not redistributed here. The sample photos in the app come from Wikimedia Commons and are credited on the Analyzer page.
 
-## 19. Model comparison
+## 👋 Contact
 
-After evaluation, open the Comparison page or `GET /api/models`. Before training the UI shows **“Evaluation results will appear after training.”** / **“Not trained yet.”** — never placeholder metrics.
+**Amar Sai** (Amareshwar Thuraka)
 
-## 20. Limitations
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-amareshwar9347-08090a?style=flat-square&logo=linkedin&logoColor=2de2e6)](https://www.linkedin.com/in/amareshwar9347)
+[![GitHub](https://img.shields.io/badge/GitHub-AmarSai01-08090a?style=flat-square&logo=github&logoColor=2de2e6)](https://github.com/AmarSai01)
 
-- Classification uses a documented `max_total_area` reduction of multi-instance COCO labels (official splits preserved)
-- Class imbalance (especially crack) affects per-class metrics
-- Academic-scale training may overfit without sufficient data/augmentation
-- Inference quality depends entirely on authorized CarDD access and training
-- Web app is for local/demo deployment, not hardened multi-tenant production
-- First prediction after server start may be slower while Keras models load into memory
-
-## 21. Future improvements
-
-- Instance segmentation / detection heads on CarDD masks
-- Calibration & uncertainty estimates
-- Authenticated multi-user deployment
-- ONNX / TensorRT optimization for latency
-
-## 22. Academic citation for CarDD
-
-```bibtex
-@ARTICLE{CarDD,
-  author={Wang, Xinkuang and Li, Wenjing and Wu, Zhongcheng},
-  journal={IEEE Transactions on Intelligent Transportation Systems},
-  title={CarDD: A New Dataset for Vision-Based Car Damage Detection},
-  year={2023},
-  volume={24},
-  number={7},
-  pages={7202-7214},
-  doi={10.1109/TITS.2023.3258480}
-}
-```
-
----
-
-## Repository hygiene
-
-Ignored by Git: `.env`, CarDD data, `*.zip`, large `.keras` weights, `node_modules`, venvs.
-
-**Ask before pushing to GitHub.** Dataset must never be published with the repo.
+If this project helped you, a ⭐ is appreciated.
