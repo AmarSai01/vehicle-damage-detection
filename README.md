@@ -4,17 +4,17 @@
 
 <br>
 
-[![Live site](https://img.shields.io/badge/live-vehiorax.amarsai.org-2de2e6?style=for-the-badge&labelColor=08090a)](https://vehiorax.amarsai.org)
-[![MobileNetV2 accuracy](https://img.shields.io/badge/MobileNetV2_test_accuracy-72.73%25-ff5a4e?style=for-the-badge&labelColor=08090a)](#-results)
+[![Live site](docs/readme/badges/live-site.svg)](https://vehiorax.amarsai.org)
+[![MobileNetV2 accuracy](docs/readme/badges/mobilenetv2-accuracy.svg)](#-results)
 
-![Python](https://img.shields.io/badge/Python-3.12-08090a?logo=python&logoColor=2de2e6)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-Keras-08090a?logo=tensorflow&logoColor=2de2e6)
-![FastAPI](https://img.shields.io/badge/FastAPI-08090a?logo=fastapi&logoColor=2de2e6)
-![React](https://img.shields.io/badge/React_19-08090a?logo=react&logoColor=2de2e6)
-![TypeScript](https://img.shields.io/badge/TypeScript-08090a?logo=typescript&logoColor=2de2e6)
-![Vite](https://img.shields.io/badge/Vite-08090a?logo=vite&logoColor=2de2e6)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-08090a?logo=tailwindcss&logoColor=2de2e6)
-![Vercel](https://img.shields.io/badge/Vercel-08090a?logo=vercel&logoColor=2de2e6)
+![Python](docs/readme/badges/python.svg)
+![TensorFlow](docs/readme/badges/tensorflow.svg)
+![FastAPI](docs/readme/badges/fastapi.svg)
+![React](docs/readme/badges/react.svg)
+![TypeScript](docs/readme/badges/typescript.svg)
+![Vite](docs/readme/badges/vite.svg)
+![Tailwind CSS](docs/readme/badges/tailwind-css.svg)
+![Vercel](docs/readme/badges/vercel.svg)
 
 **Upload a photo of a damaged car and get the damage type in about a second.**<br>
 Two deep-learning models, trained on the same dataset and tested on the same 374 held-out images, compared side by side.
@@ -216,7 +216,7 @@ CarDD: Wang, Li & Wu, *"CarDD: A New Dataset for Vision-Based Car Damage Detecti
 
 **Amar Sai** (Amareshwar Thuraka)
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-amareshwar9347-08090a?style=flat-square&logo=linkedin&logoColor=2de2e6)](https://www.linkedin.com/in/amareshwar9347)
-[![GitHub](https://img.shields.io/badge/GitHub-AmarSai01-08090a?style=flat-square&logo=github&logoColor=2de2e6)](https://github.com/AmarSai01)
+[![LinkedIn](docs/readme/badges/linkedin.svg)](https://www.linkedin.com/in/amareshwar9347)
+[![GitHub](docs/readme/badges/github.svg)](https://github.com/AmarSai01)
 
 If this project helped you, a ⭐ is appreciated.
